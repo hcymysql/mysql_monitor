@@ -2,7 +2,6 @@
 error_reporting(E_USER_WARNING | E_USER_NOTICE);
 
 require 'con.php';
-mysqli_query($con,"set names latin1"); 
 //mysqli_query($con,"truncate mysql_status");
 $result1 = mysqli_query($con,"select ip,dbname,user,pwd,port from mysql_status_info");
 

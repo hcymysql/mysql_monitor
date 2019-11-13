@@ -26,7 +26,7 @@ $sqls=array(
 
 while( list($ip,$dbname,$user,$pwd,$port) = mysqli_fetch_array($result1))
 {		
-$all_links = $hcy = array();
+$all_links = array();
 
 foreach ($sqls as $sql) { 
 	$link1 = mysqli_init();

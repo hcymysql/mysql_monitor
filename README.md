@@ -8,3 +8,7 @@ MySQL状态监控图形展示
 
 # check_mysql_status.php（用来采集被监控端MySQL状态信息）
 # check_mysql_repl.php（用来采集被监控端MySQL主从复制信息）
+
+*/1 * * * * cd /var/www/html/mysql_monitor/; /usr/bin/php /var/www/html/mysql_monitor/check_mysql_repl.php > /dev/null 2 >&1
+
+*/1 * * * * cd /var/www/html/mysql_monitor/; /usr/bin/php /var/www/html/mysql_monitor/check_mysql_status.php > /dev/null 2 >&1

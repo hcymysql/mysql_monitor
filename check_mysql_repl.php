@@ -41,31 +41,40 @@ do {
     }
     foreach ($links as $link) {
         if ($result = $link->reap_async_query()) {
-            while($row = $result->fetch_row()){
-		   		$r[$row[0]] = $row[1];
-	   		}
-	    array_push($re,$r);
+           while($row = $result->fetch_array()){
+		//$row = $result->fetch_array();
+		//$row=str_replace("'","\\'",$row);
+		//print_r($row);
+		//$r[$row[0]] = $row[1];
+		//echo $r[$row[0]]."\n";
+		//$r[$row[0]] = $row[1];
+		array_push($re,$row);
+	   }
+	    //array_push($re,$r);
 	    //array_splice($r, 0, count($r));
             if (is_object($result)){
                 mysqli_free_result($result);
-	    	}
+	    }
         } else die(sprintf("MySQLi Error: %s", mysqli_error($link)));
         $processed++;
     }
 } while ($processed < count($all_links));
 	echo "---------------------------"."\n";
-    //print_r($re);
-
-	$role=empty($re[0])?1:0;
+        //print_r($re);
+	//1为Primary，0为Secondary
+	$role=empty($re[2]['Slave_IO_State'])?1:0;
+	$gtid=$re[2]['Auto_Position']==1?'ON':'OFF';
+	echo "角色是:".$role."\n";
 	$is_live=isset($connect_error)?0:1;
-	
+	echo $is_live."\n";
+
 	if($is_live==0){
 	    echo "$ip"."\n";
             echo $connect_error."\n";
-	    	unset($connect_error);
+	    unset($connect_error);
 	    $sql = "INSERT INTO mysql_repl_status(host,dbname,port,role,is_live) VALUES('{$ip}','{$dbname}','{$port}','{$role}','{$is_live}')";	
 	} else {
-	    $sql = "INSERT INTO mysql_repl_status(server_id,host,dbname,port,role,is_live,read_only,gtid_mode,Master_Host,Master_Port,Slave_IO_Running,Slave_SQL_Running,Seconds_Behind_Master,Master_Log_File,Relay_Master_Log_File,Read_Master_Log_Pos,Exec_Master_Log_Pos,Last_IO_Error,Last_SQL_Error,create_time) values('{$re[1]['server_id']}','{$ip}','{$dbname}','{$port}','{$role}','{$is_live}','{$re[2]['read_only_value']}','{$re[0]['Using_Gtid']}','{$re[0]['Master_Host']}','{$re[0]['Master_Port']}','{$re[0]['Slave_IO_Running']}','{$re[0]['Slave_SQL_Running']}','{$re[0]['Seconds_Behind_Master']}','{$re[0]['Master_Log_File']}','{$re[0]['Relay_Master_Log_File']}','{$re[0]['Read_Master_Log_Pos']}','{$re[0]['Exec_Master_Log_Pos']}','{$re[0]['Last_IO_Error']}','{$re[0]['Last_SQL_Error']}',now())";
+	    $sql = "INSERT INTO mysql_repl_status(server_id,host,dbname,port,role,is_live,read_only,gtid_mode,Master_Host,Master_Port,Slave_IO_Running,Slave_SQL_Running,Seconds_Behind_Master,Master_Log_File,Relay_Master_Log_File,Read_Master_Log_Pos,Exec_Master_Log_Pos,Last_IO_Error,Last_SQL_Error,create_time) values('{$re[1][1]}','{$ip}','{$dbname}','{$port}','{$role}','{$is_live}','{$re[1][0]}','{$gtid}','{$re[2]['Master_Host']}','{$re[2]['Master_Port']}','{$re[2]['Slave_IO_Running']}','{$re[2]['Slave_SQL_Running']}','{$re[2]['Seconds_Behind_Master']}','{$re[2]['Master_Log_File']}','{$re[2]['Relay_Master_Log_File']}','{$re[2]['Read_Master_Log_Pos']}','{$re[2]['Exec_Master_Log_Pos']}','{$re[2]['Last_IO_Error']}','{$re[2]['Last_SQL_Error']}',now())";
 	}
 	
         if (mysqli_query($con, $sql)) {
@@ -73,6 +82,7 @@ do {
         } else {
             echo "Error: " . $sql . "\n" . mysqli_error($con);
         }
+
 }
 ?>
 

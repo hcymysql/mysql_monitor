@@ -77,7 +77,7 @@ return true;
 	<?php
 	
 	require 'conn.php';
-	$result = mysqli_query($conn,"SELECT dbname FROM mysql_status_info group by dbname ASC");
+	$result = mysqli_query($conn,"SELECT dbname FROM mysql_status_info group by dbname ORDER BY dbname ASC");
 	while($row = mysqli_fetch_array($result)){
 		echo "<option value=\"".$row[0]."\">".$row[0]."</option>"."<br>";
     }

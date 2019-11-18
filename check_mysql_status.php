@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_USER_WARNING | E_USER_NOTICE);
 
-require 'con.php';
+require 'conn.php';
 //mysqli_query($con,"truncate mysql_status");
 $result1 = mysqli_query($con,"select ip,dbname,user,pwd,port from mysql_status_info");
 
@@ -26,7 +26,7 @@ $sqls=array(
 
 while( list($ip,$dbname,$user,$pwd,$port) = mysqli_fetch_array($result1))
 {		
-$all_links = array();
+$all_links = $hcy = array();
 
 foreach ($sqls as $sql) { 
 	$link1 = mysqli_init();
@@ -57,7 +57,9 @@ do {
     foreach ($links as $link) {
         if ($result = $link->reap_async_query()) {
            while($row = $result->fetch_row()){
+	 	//print_r($row);
 		$r[$row[0]] = $row[1];
+		//print_r($r);
 	   }
 	    array_push($re,$r);
 	    //array_splice($r, 0, count($r));
@@ -93,7 +95,7 @@ do {
 	    echo "$ip"."\n";
             echo $connect_error."\n";
 	    unset($connect_error);
-	    $sql = "INSERT INTO mysql_status(host,dbname,port,role,is_live,create_time)  VALUES('{$ip}','{$dbname}','{$port}','{$role}',{$is_live},now())"; 
+	    $sql = "INSERT INTO mysql_status(host,dbname,port,is_live,create_time)  VALUES('{$ip}','{$dbname}','{$port}',{$is_live},now())"; 
 	} else {
 	    echo $ip." ok"."\n";
             echo $is_live."\n";
@@ -103,7 +105,7 @@ do {
     if (mysqli_query($con, $sql)) {
         echo "{$ip}:'{$dbname}':'{$port}'新记录插入成功\n";
 	mysqli_query($con,"insert into mysql_status_history select * from mysql_status");
-	mysqli_query($con,"delete from mysql_status where host='{$ip}' and dbname='{$dbname}' and create_time<now()");
+	mysqli_query($con,"delete from mysql_status where host='{$ip}' and dbname='{$dbname}' and port='{$port}' and create_time<DATE_SUB(now(),interval 30 second)");
     } else {
         echo "Error: " . $sql . "\n" . mysqli_error($con);
     }	

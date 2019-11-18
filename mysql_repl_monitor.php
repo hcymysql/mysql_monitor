@@ -153,7 +153,11 @@ $result = mysqli_query($con,$sql);
 
 while($row = mysqli_fetch_array($result)) 
 {
-$role=$row['5']==0?'<span class="badge badge-secondary">slave</span>':'<span class="badge badge-primary">master</span>';
+    if($row['5']==NULL){
+	$role='<span class="badge badge-secondary">未知</span>';
+    } else {
+	$role=$row['5']==0?'<span class="badge badge-secondary">slave</span>':'<b><span class="badge badge-primary">master</span></b>';
+    }
 $status=$row['6']==1?'<span class="badge badge-success">在线</span>':'<span class="badge badge-danger">宕机</span>';
 echo "<tr>";
 echo "<td>{$row['1']}</td>";

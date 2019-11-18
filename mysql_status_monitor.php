@@ -162,7 +162,7 @@ while($row = mysqli_fetch_array($result))
     if($row['5']==0){
 	$role='<span class="badge badge-secondary">未知</span>';
     } else {
-	$role=$row['4']==0?'<span class="badge badge-secondary">slave</span>':'<b><span class="badge badge-primary">master</span></b>';
+	$role=$row['4']==0?'<span class="badge badge-warning">slave</span>':'<b><span class="badge badge-primary">master</span></b>';
     }
 $status=$row['5']==1?'<b><span class="badge badge-success">在线</span></b>':'<span class="badge badge-danger">宕机</span>';
 echo "<tr>";

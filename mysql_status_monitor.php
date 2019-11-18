@@ -77,7 +77,7 @@ return true;
 	<?php
 	
 	require 'conn.php';
-	$result = mysqli_query($conn,"SELECT dbname FROM mysql_status_info group by dbname ORDER BY dbname ASC");
+	$result = mysqli_query($con,"SELECT dbname FROM mysql_status_info group by dbname");
 	while($row = mysqli_fetch_array($result)){
 		echo "<option value=\"".$row[0]."\">".$row[0]."</option>"."<br>";
     }
@@ -132,7 +132,6 @@ echo "</table>";
 <tbody>
 
 <?php
-
     require 'conn.php';
 
 $perNumber=200; //每页显示的记录数  
@@ -160,7 +159,11 @@ $result = mysqli_query($con,$sql);
 
 while($row = mysqli_fetch_array($result)) 
 {
-$role=$row['4']==0?'<span class="badge badge-secondary">slave</span>':'<b><span class="badge badge-primary">master</span></b>';
+    if($row['5']==0){
+	$role='<span class="badge badge-secondary">未知</span>';
+    } else {
+	$role=$row['4']==0?'<span class="badge badge-secondary">slave</span>':'<b><span class="badge badge-primary">master</span></b>';
+    }
 $status=$row['5']==1?'<b><span class="badge badge-success">在线</span></b>':'<span class="badge badge-danger">宕机</span>';
 echo "<tr>";
 echo "<td>{$row['1']}</td>";

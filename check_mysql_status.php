@@ -35,7 +35,7 @@ if($monitor==0 || empty($monitor)){
 	echo "被监控主机：$ip 未开启监控，跳过不检测。"."\n";
 	continue;
 }		
-$all_links = $hcy = array();
+$all_links = array();
 
 foreach ($sqls as $sql) { 
 	$link1 = mysqli_init();
@@ -106,6 +106,10 @@ do {
 	    unset($connect_error);
 
 	    //告警---------------------  
+	    if($send_mail==0 || empty($send_mail)){
+        	echo "被监控主机：$ip 关闭监控报警。"."\n";
+        	continue;
+	    }
 	    $alarm_subject = "【告警】被监控主机：".$ip." 不能连接 ".date("Y-m-d H:i:s");
 	    $alarm_info = "被监控主机：".$ip." 不能连接，请检查!";
 	    $sendmail = new mail($send_mail_to_list,$alarm_subject,$alarm_info);
@@ -113,6 +117,7 @@ do {
             //-------------------------
 	    $sql = "INSERT INTO mysql_status(host,dbname,port,is_live,create_time)  VALUES('{$ip}','{$dbname}','{$port}',{$is_live},now())"; 
 	} else {
+	    //恢复---------------------
 	    $recover_sql = "SELECT is_live FROM mysql_status_history WHERE HOST='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}' ORDER BY create_time DESC LIMIT 1";
 	    $recover_result = mysqli_query($con, $recover_sql);
 	    $recover_row = mysqli_fetch_assoc($recover_result);
@@ -122,6 +127,7 @@ do {
 		$sendmail = new mail($send_mail_to_list,$recover_subject,$recover_info);
 		$sendmail->execCommand();
 	    }
+	    //-------------------------
 	    echo $ip." ok"."\n";
             echo $is_live."\n";
             $sql = "INSERT INTO mysql_status(host,dbname,port,role,is_live,max_connections,threads_connected,qps_select,qps_insert,qps_update,qps_delete,runtime,db_version,create_time) VALUES('{$ip}','{$dbname}','{$port}','{$role}',{$is_live},'{$re[2]['max_connections']}',{$re[2]['Threads_connected']},$QPS_SELECT,$QPS_INSERT,$QPS_UPDATE,$QPS_DELETE,round({$re[1]['Uptime']}/3600/24,1),'{$re[3]['version']}',now())";
@@ -129,8 +135,8 @@ do {
 
     if (mysqli_query($con, $sql)) {
         echo "{$ip}:'{$dbname}':'{$port}'新记录插入成功\n";
-	mysqli_query($con,"insert into mysql_status_history select * from mysql_status");
-	mysqli_query($con,"delete from mysql_status where host='{$ip}' and dbname='{$dbname}' and port='{$port}' and create_time<DATE_SUB(now(),interval 30 second)");
+	mysqli_query($con,"INSERT INTO mysql_status_history(HOST,dbname,PORT,role,is_live,max_connections,threads_connected,qps_select,qps_insert,qps_update,qps_delete,runtime,db_version,create_time) SELECT HOST,dbname,PORT,role,is_live,max_connections,threads_connected,qps_select,qps_insert,qps_update,qps_delete,runtime,db_version,create_time FROM mysql_status;");
+	mysqli_query($con,"delete from mysql_status where host='{$ip}' and dbname='{$dbname}' and port='{$port}' and create_time<DATE_SUB(now(),interval 10 second)");
     } else {
         echo "Error: " . $sql . "\n" . mysqli_error($con);
     }	

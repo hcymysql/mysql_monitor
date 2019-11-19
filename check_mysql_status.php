@@ -1,9 +1,13 @@
 <?php
 error_reporting(E_USER_WARNING | E_USER_NOTICE);
+header("Content-type:text/html;charset=utf-8;");
+ini_set('date.timezone','Asia/Shanghai');
 
 require 'conn.php';
+include 'mail/mail.php';
+
 //mysqli_query($con,"truncate mysql_status");
-$result1 = mysqli_query($con,"select ip,dbname,user,pwd,port from mysql_status_info");
+$result1 = mysqli_query($con,"select ip,dbname,user,pwd,port,monitor,send_mail,send_mail_to_list from mysql_status_info");
 
 $r=$re=array();
 
@@ -24,8 +28,13 @@ $sqls=array(
 	"SHOW SLAVE STATUS"
       );
 
-while( list($ip,$dbname,$user,$pwd,$port) = mysqli_fetch_array($result1))
-{		
+while( list($ip,$dbname,$user,$pwd,$port,$monitor,$send_mail,$send_mail_to_list) = mysqli_fetch_array($result1))
+{
+
+if($monitor==0 || empty($monitor)){
+	echo "被监控主机：$ip 未开启监控，跳过不检测。"."\n";
+	continue;
+}		
 $all_links = $hcy = array();
 
 foreach ($sqls as $sql) { 
@@ -95,11 +104,27 @@ do {
 	    echo "$ip"."\n";
             echo $connect_error."\n";
 	    unset($connect_error);
+
+	    //告警---------------------  
+	    $alarm_subject = "【告警】被监控主机：".$ip." 不能连接 ".date("Y-m-d H:i:s");
+	    $alarm_info = "被监控主机：".$ip." 不能连接，请检查!";
+	    $sendmail = new mail($send_mail_to_list,$alarm_subject,$alarm_info);
+            $sendmail->execCommand();
+            //-------------------------
 	    $sql = "INSERT INTO mysql_status(host,dbname,port,is_live,create_time)  VALUES('{$ip}','{$dbname}','{$port}',{$is_live},now())"; 
 	} else {
+	    $recover_sql = "SELECT is_live FROM mysql_status_history WHERE HOST='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}' ORDER BY create_time DESC LIMIT 1";
+	    $recover_result = mysqli_query($con, $recover_sql);
+	    $recover_row = mysqli_fetch_assoc($recover_result);
+	    if(!empty($recover_row) && $recover_row['is_live']==0){
+		$recover_subject = "【恢复】被监控主机：".$ip." 已恢复 ".date("Y-m-d H:i:s");
+		$recover_info = "被监控主机：".$ip." 已恢复";
+		$sendmail = new mail($send_mail_to_list,$recover_subject,$recover_info);
+		$sendmail->execCommand();
+	    }
 	    echo $ip." ok"."\n";
             echo $is_live."\n";
-            $sql = "INSERT INTO mysql_status(host,dbname,port,role,is_live,max_connections,threads_connected,qps_select,qps_insert,qps_update,qps_delete,runtime,db_version,create_time) VALUES('{$ip}','{$dbname}','{$port}','{$role}',{$is_live},'{$re[2]['max_connections']}',{$re[1]['Threads_connected']},$QPS_SELECT,$QPS_INSERT,$QPS_UPDATE,$QPS_DELETE,round({$re[1]['Uptime']}/3600/24,1),'{$re[3]['version']}',now())";
+            $sql = "INSERT INTO mysql_status(host,dbname,port,role,is_live,max_connections,threads_connected,qps_select,qps_insert,qps_update,qps_delete,runtime,db_version,create_time) VALUES('{$ip}','{$dbname}','{$port}','{$role}',{$is_live},'{$re[2]['max_connections']}',{$re[2]['Threads_connected']},$QPS_SELECT,$QPS_INSERT,$QPS_UPDATE,$QPS_DELETE,round({$re[1]['Uptime']}/3600/24,1),'{$re[3]['version']}',now())";
 	}    
 
     if (mysqli_query($con, $sql)) {

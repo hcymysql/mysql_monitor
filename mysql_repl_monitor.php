@@ -65,7 +65,7 @@ return true;
 	<?php
 	
 	require 'conn.php';
-	$result = mysqli_query($conn,"SELECT dbname FROM mysql_repl_info group by dbname ASC");
+	$result = mysqli_query($con,"SELECT dbname FROM mysql_status_info GROUP BY dbname ORDER BY dbname ASC");
 	while($row = mysqli_fetch_array($result)){
 		echo "<option value=\"".$row[0]."\">".$row[0]."</option>"."<br>";
     	}
@@ -158,6 +158,7 @@ while($row = mysqli_fetch_array($result))
     } else {
 	$role=$row['5']==0?'<span class="badge badge-warning">slave</span>':'<b><span class="badge badge-primary">master</span></b>';
     }
+//$role=$row['5']==0?'<span class="badge badge-secondary">slave</span>':'<span class="badge badge-primary">master</span>';
 $status=$row['6']==1?'<span class="badge badge-success">在线</span>':'<span class="badge badge-danger">宕机</span>';
 echo "<tr>";
 echo "<td>{$row['1']}</td>";

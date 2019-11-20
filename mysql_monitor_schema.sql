@@ -53,7 +53,7 @@ CREATE TABLE `mysql_repl_status` (
   `Last_SQL_Error` varchar(500) DEFAULT NULL,
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64,7 +64,7 @@ DROP TABLE IF EXISTS `mysql_status`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `mysql_status` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(10) unsigned NOT NULL AUTO_INCREMENT,
   `host` varchar(30) DEFAULT NULL,
   `dbname` varchar(100) DEFAULT NULL,
   `port` int(11) DEFAULT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE `mysql_status` (
   `db_version` varchar(100) DEFAULT NULL,
   `create_time` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=208 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -109,7 +109,7 @@ CREATE TABLE `mysql_status_history` (
   PRIMARY KEY (`id`),
   KEY `create_time` (`create_time`),
   KEY `IX_h_d_p` (`host`,`dbname`,`port`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=441 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,8 +126,15 @@ CREATE TABLE `mysql_status_info` (
   `user` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '输入被监控MySQL的用户名',
   `pwd` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '输入被监控MySQL的密码',
   `port` int(11) DEFAULT NULL COMMENT '输入被监控MySQL的端口号',
+  `monitor` tinyint(4) DEFAULT '1' COMMENT '0为关闭监控;1为开启监控',
+  `send_mail` tinyint(4) DEFAULT '1' COMMENT '0为关闭邮件报警;1为开启邮件报警',
+  `send_mail_to_list` varchar(255) DEFAULT NULL COMMENT '邮件人列表',
+  `send_weixin` tinyint(4) DEFAULT '1' COMMENT '0为关闭微信报警;1为开启微信报警',
+  `send_weixin_to_list` varchar(100) DEFAULT NULL COMMENT '微信公众号',
+  `alarm_threads_running` tinyint(4) DEFAULT NULL COMMENT '记录活动连接数告警信息，1为已记录',
+  `threshold_alarm_threads_running` tinyint(4) DEFAULT NULL COMMENT '设置连接数阀值',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='监控信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8 COMMENT='监控信息表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -139,4 +146,4 @@ CREATE TABLE `mysql_status_info` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-13 14:09:48
+-- Dump completed on 2019-11-20 16:28:54

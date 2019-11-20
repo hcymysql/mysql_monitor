@@ -5,9 +5,10 @@ ini_set('date.timezone','Asia/Shanghai');
 
 require 'conn.php';
 include 'mail/mail.php';
+include 'weixin/weixin.php';
 
 //mysqli_query($con,"truncate mysql_status");
-$result1 = mysqli_query($con,"select ip,dbname,user,pwd,port,monitor,send_mail,send_mail_to_list,threshold_alarm_threads_running from mysql_status_info");
+$result1 = mysqli_query($con,"select ip,dbname,user,pwd,port,monitor,send_mail,send_mail_to_list,send_weixin,send_weixin_to_list,threshold_alarm_threads_running from mysql_status_info");
 
 $r=$re=array();
 
@@ -28,7 +29,7 @@ $sqls=array(
 	"SHOW SLAVE STATUS"
       );
 
-while( list($ip,$dbname,$user,$pwd,$port,$monitor,$send_mail,$send_mail_to_list,$threshold_alarm_threads_running) = mysqli_fetch_array($result1))
+while( list($ip,$dbname,$user,$pwd,$port,$monitor,$send_mail,$send_mail_to_list,$send_weixin,$send_weixin_to_list,$threshold_alarm_threads_running) = mysqli_fetch_array($result1))
 {
 
 if($monitor==0 || empty($monitor)){
@@ -100,25 +101,33 @@ do {
 
       //主机存活报警
 	if($is_live==0){
-	    echo "$ip"."\n";
+	      echo "$ip"."\n";
             echo $connect_error."\n";
-	    unset($connect_error);
+	      unset($connect_error);
 
 	    //告警---------------------  
 	    if($send_mail==0 || empty($send_mail)){
-        	echo "被监控主机：$ip 关闭监控报警。"."\n";
+        	echo "被监控主机：$ip 关闭邮件监控报警。"."\n";
 	    } else {
 	    	$alarm_subject = "【告警】被监控主机：".$ip." 不能连接 ".date("Y-m-d H:i:s");
 	    	$alarm_info = "被监控主机：".$ip." 不能连接，请检查!";
 	    	$sendmail = new mail($send_mail_to_list,$alarm_subject,$alarm_info);
-            	$sendmail->execCommand();
+            $sendmail->execCommand();
+	    }
+	    if($send_weixin==0 || empty($send_weixin)){
+		echo "被监控主机：$ip 关闭微信监控报警。"."\n";
+	    } else {
+		$alarm_subject = "【告警】被监控主机：".$ip." 不能连接 ".date("Y-m-d H:i:s");
+		$alarm_info = "被监控主机：".$ip." 不能连接，请检查!";
+		$sendweixin = new weixin($send_weixin_to_list,$alarm_subject,$alarm_info);
+		$sendweixin->execCommand();
 	    }
             //-------------------------
 	    $sql = "INSERT INTO mysql_status(host,dbname,port,is_live,create_time)  VALUES('{$ip}','{$dbname}','{$port}',{$is_live},now())"; 
 	} else {
 	    //恢复---------------------
             if($send_mail==0 || empty($send_mail)){
-                echo "被监控主机：$ip 关闭监控报警。"."\n";
+                echo "被监控主机：$ip 关闭邮件监控报警。"."\n";
             } else {
 	    	$recover_sql = "SELECT is_live FROM mysql_status_history WHERE HOST='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}' ORDER BY create_time DESC LIMIT 1";
 	    	$recover_result = mysqli_query($con, $recover_sql);
@@ -130,7 +139,21 @@ do {
 		$sendmail = new mail($send_mail_to_list,$recover_subject,$recover_info);
 		$sendmail->execCommand();
 	    }
-	    echo $ip." ok"."\n";
+
+	    if($send_weixin==0 || empty($send_weixin)){
+		echo "被监控主机：$ip 关闭微信监控报警。"."\n";
+	    } else {
+		$recover_sql = "SELECT is_live FROM mysql_status_history WHERE HOST='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}' ORDER BY create_time DESC LIMIT 1
+";              $recover_result = mysqli_query($con, $recover_sql);
+                $recover_row = mysqli_fetch_assoc($recover_result);
+	    }
+            if(!empty($recover_row) && $recover_row['is_live']==0){
+                $recover_subject = "【恢复】被监控主机：".$ip." 已恢复 ".date("Y-m-d H:i:s");
+                $recover_info = "被监控主机：".$ip." 已恢复";
+                $sendweixin = new weixin($send_weixin_to_list,$recover_subject,$recover_info);
+                $sendweixin->execCommand();
+            }
+	      echo $ip." ok"."\n";
             echo $is_live."\n";
             $sql = "INSERT INTO mysql_status(host,dbname,port,role,is_live,max_connections,threads_connected,qps_select,qps_insert,qps_update,qps_delete,runtime,db_version,create_time) VALUES('{$ip}','{$dbname}','{$port}','{$role}',{$is_live},'{$re[2]['max_connections']}',{$re[2]['Threads_connected']},$QPS_SELECT,$QPS_INSERT,$QPS_UPDATE,$QPS_DELETE,round({$re[1]['Uptime']}/3600/24,1),'{$re[3]['version']}',now())";		    
 	}    
@@ -139,31 +162,53 @@ do {
       if(!empty($threshold_alarm_threads_running) && $re[2]['Threads_connected'] >=$threshold_alarm_threads_running){
 	    //告警---------------------  
 	    if($send_mail==0 || empty($send_mail)){
-        	echo "被监控主机：$ip 关闭监控报警。"."\n";
+        	  echo "被监控主机：$ip 关闭邮件监控报警。"."\n";
 	    } else {
-	    	$alarm_subject = "【告警】被监控主机：".$ip." 活动连接数超高，请检查。 ".date("Y-m-d H:i:s");
-	    	$alarm_info = "被监控主机：".$ip." 活动连接数是{$re[2]['Threads_connected']}，高于报警阀值{$threshold_alarm_threads_running}";
-	    	$sendmail = new mail($send_mail_to_list,$alarm_subject,$alarm_info);
-            	$sendmail->execCommand();
-		$update_connect_status = "UPDATE mysql_status_info SET alarm_threads_running = 1 WHERE IP='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}'";
-		mysqli_query($con, $update_connect_status);
+	    	    $alarm_subject = "【告警】被监控主机：".$ip." 活动连接数超高，请检查。 ".date("Y-m-d H:i:s");
+	    	    $alarm_info = "被监控主机：".$ip." 活动连接数是{$re[2]['Threads_connected']}，高于报警阀值{$threshold_alarm_threads_running}";
+	    	    $sendmail = new mail($send_mail_to_list,$alarm_subject,$alarm_info);
+                $sendmail->execCommand();
 	    }
-	} else {
+
+	    if($send_weixin==0 || empty($send_weixin)){
+        	  echo "被监控主机：$ip 关闭微信监控报警。"."\n";
+	    } else {
+	    	    $alarm_subject = "【告警】被监控主机：".$ip." 活动连接数超高，请检查。 ".date("Y-m-d H:i:s");
+	    	    $alarm_info = "被监控主机：".$ip." 活动连接数是{$re[2]['Threads_connected']}，高于报警阀值{$threshold_alarm_threads_running}";
+	    	    $sendweixin = new weixin($send_weixin_to_list,$alarm_subject,$alarm_info);
+                $sendweixin->execCommand();
+	    }	    
+          if(($send_mail==1 || $send_weixin==1)){		
+	          $update_connect_status = "UPDATE mysql_status_info SET alarm_threads_running = 1 WHERE IP='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}'";
+	          mysqli_query($con, $update_connect_status);
+	    }
+	}  else {
 	    //恢复---------------------
             if($send_mail==0 || empty($send_mail)){
-                echo "被监控主机：$ip 关闭监控报警。"."\n";
-            } else {
-	    	$recover_threads = "SELECT alarm_threads_running FROM mysql_status_info WHERE IP='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}' ";
-	    	$recover_threads = mysqli_query($con, $recover_threads);
-	    	$recover_threads_row = mysqli_fetch_assoc($recover_threads);
-	    }
-	    if(!empty($recover_threads_row['alarm_threads_running']) && $recover_threads_row['alarm_threads_running'] == 1){
-		$recover_subject = "【恢复】被监控主机：".$ip." 活动连接数已恢复 ".date("Y-m-d H:i:s");
-		$recover_info = "被监控主机：".$ip." 活动连接数已恢复，当前连接数是{$re[2]['Threads_connected']}";
-		$sendmail = new mail($send_mail_to_list,$recover_subject,$recover_info);
-		$sendmail->execCommand();
-		$update_connect_status = "UPDATE mysql_status_info SET alarm_threads_running = 0 WHERE IP='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}'";
-		mysqli_query($con, $update_connect_status);		
+                echo "被监控主机：$ip 关闭邮件监控报警。"."\n";
+            } 
+            if($send_weixin==0 || empty($send_weixin)){
+                echo "被监控主机：$ip 关闭微信监控报警。"."\n";
+            }
+	      if(($send_mail==1 || $send_weixin==1)){
+		    $recover_threads = "SELECT alarm_threads_running FROM mysql_status_info WHERE IP='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}' ";
+	    	    $recover_threads = mysqli_query($con, $recover_threads);
+	    	    $recover_threads_row = mysqli_fetch_assoc($recover_threads);
+	      }
+	      if(!empty($recover_threads_row['alarm_threads_running']) && $recover_threads_row['alarm_threads_running'] == 1){
+		    $recover_subject = "【恢复】被监控主机：".$ip." 活动连接数已恢复 ".date("Y-m-d H:i:s");
+		    $recover_info = "被监控主机：".$ip." 活动连接数已恢复，当前连接数是{$re[2]['Threads_connected']}";
+		    if($send_mail==1 ){
+			  $sendmail = new mail($send_mail_to_list,$recover_subject,$recover_info);
+			  $sendmail->execCommand();
+		    }
+		    if($send_weixin==1 ){
+			  $sendweixin = new weixin($send_weixin_to_list,$recover_subject,$recover_info);
+			  $sendweixin->execCommand();
+		    }
+		
+		    $update_connect_status = "UPDATE mysql_status_info SET alarm_threads_running = 0 WHERE IP='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}'";
+		    mysqli_query($con, $update_connect_status);		
 	    }
 	}    	
 	

@@ -20,7 +20,7 @@ include 'weixin/weixin.php';
 while( list($ip,$dbname,$user,$pwd,$port,$monitor,$send_mail,$send_mail_to_list,$send_weixin,$send_weixin_to_list,$alarm_repl_status,$threshold_warning_repl_delay) = mysqli_fetch_array($result1))
 {		
 if($monitor==0 || empty($monitor)){
-	echo "被监控主机：$ip 未开启监控，跳过不检测。"."\n";
+	echo "\n被监控主机：$ip 未开启监控，跳过不检测。"."\n";
 	continue;
 }		
 $all_links = array();
@@ -60,14 +60,14 @@ do {
         $processed++;
     }
 } while ($processed < count($all_links));
-	echo "---------------------------"."\n";
+	//echo "---------------------------"."\n";
         //print_r($re);
 	//1为Primary，0为Secondary
 	$role=empty($re[2]['Slave_IO_State'])?1:0;
 	$gtid=$re[2]['Auto_Position']==1?'ON':'OFF';
-	echo "角色是:".$role."\n";
+	echo "角色是:".$role_status=$role==1?'Primary'.PHP_EOL:'Secondary'.PHP_EOL;
 	$is_live=isset($connect_error)?0:1;
-	echo $is_live."\n";
+	//echo $is_live."\n";
 
 	if($is_live==0){
 	    echo "$ip"."\n";
@@ -191,6 +191,7 @@ do {
 	
         if (mysqli_query($con, $sql)) {
             echo "{$ip}:'{$dbname}':'{$port}:{$pwd}'新记录插入成功\n";
+	    echo "---------------------------\n\n";
 		mysqli_query($con,"delete from mysql_repl_status where host='{$ip}' and dbname='{$dbname}' and port='{$port}' and create_time<DATE_SUB(now(),interval 10 second)");
         } else {
             echo "Error: " . $sql . "\n" . mysqli_error($con);

@@ -10,6 +10,8 @@ MySQL状态监控图形展示
 
 yum install python-simplejson -y
 
+chmod -R 755  ./mail/sendEmail
+chmod -R 755  ./weixin/wechat.py
 
 # check_mysql_status.php（用来采集被监控端MySQL状态信息）
 # check_mysql_repl.php（用来采集被监控端MySQL主从复制信息）

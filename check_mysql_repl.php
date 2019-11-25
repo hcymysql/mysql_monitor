@@ -200,7 +200,7 @@ do {
         if (mysqli_query($con, $sql)) {
             echo "{$ip}:'{$dbname}'新记录插入成功\n";
 	      echo "---------------------------\n\n";
-		mysqli_query($con,"delete from mysql_repl_status where host='{$ip}' and dbname='{$dbname}' and port='{$port}' and create_time<DATE_SUB(now(),interval 30 second)");
+		mysqli_query($con,"delete from mysql_repl_status where host='{$ip}' and dbname='{$dbname}' and port='{$port}' and create_time<DATE_SUB(now(),interval 10 second)");
         } else {
 	      echo "{$ip}:'{$dbname}'新记录插入失败\n";
             echo "Error: " . $sql . "\n" . mysqli_error($con);

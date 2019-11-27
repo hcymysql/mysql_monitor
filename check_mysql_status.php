@@ -201,7 +201,7 @@ do {
 	echo "-------------------------------------------------------------\n\n\n";
 	mysqli_query($con,"INSERT INTO mysql_status_history(HOST,dbname,PORT,role,is_live,max_connections,threads_connected,qps_select,qps_insert,qps_update,qps_delete,Handler_read_key,Handler_read_rnd_next,runtime,db_version,create_time) SELECT HOST,dbname,PORT,role,is_live,max_connections,threads_connected,qps_select,qps_insert,qps_update,qps_delete,Handler_read_key,Handler_read_rnd_next,runtime,db_version,create_time FROM mysql_status;");
 	
-	mysqli_query($con,"delete from mysql_status where host='{$ip}' and dbname='{$dbname}' and port='{$port}' and create_time<DATE_SUB(now(),interval 10 second)");
+	mysqli_query($con,"DELETE FROM mysql_status where host='{$ip}' and dbname='{$dbname}' and port='{$port}' and create_time<DATE_SUB(now(),interval 30 second)");
     } else {
 	  echo "\n{$ip}:'{$dbname}' 新记录插入失败\n";
         echo "Error: " . $sql . "\n" . mysqli_error($con);

@@ -63,6 +63,8 @@ CREATE TABLE `mysql_status` (
   `qps_insert` int(11) DEFAULT NULL,
   `qps_update` int(11) DEFAULT NULL,
   `qps_delete` int(11) DEFAULT NULL,
+  `Handler_read_key` int(11) DEFAULT NULL,
+  `Handler_read_rnd_next` int(11) DEFAULT NULL,
   `runtime` int(11) DEFAULT NULL,
   `db_version` varchar(100) DEFAULT NULL,
   `create_time` timestamp NULL DEFAULT NULL,
@@ -87,6 +89,8 @@ CREATE TABLE `mysql_status_history` (
   `qps_insert` int(11) DEFAULT NULL,
   `qps_update` int(11) DEFAULT NULL,
   `qps_delete` int(11) DEFAULT NULL,
+  `Handler_read_key` int(11) DEFAULT NULL,
+  `Handler_read_rnd_next` int(11) DEFAULT NULL,
   `runtime` int(11) DEFAULT NULL,
   `db_version` varchar(100) DEFAULT NULL,
   `create_time` timestamp NULL DEFAULT NULL,
@@ -118,6 +122,7 @@ CREATE TABLE `mysql_status_info` (
   PRIMARY KEY (`id`),
   KEY `IX_i_d_p` (`ip`,`dbname`,`port`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='监控信息表';
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

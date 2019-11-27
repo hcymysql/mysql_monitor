@@ -20,6 +20,8 @@
           <?php include 'js/show_connect.php';?> 
      <div id="qps" style="height:400px"></div>
 	      <?php include 'js/show_graph_qps.php';?> 
+     <div id="index" style="height:400px"></div>
+              <?php include 'js/show_graph_index.php';?>
 <br><br>
 </body>
 </html>

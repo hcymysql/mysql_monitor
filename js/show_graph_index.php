@@ -39,7 +39,7 @@
 						}
                     },
                     legend: {
-                       data:['Handler_read_key','Handler_read_key']
+                       data:['Handler_read_key','Handler_read_rnd_next']
                     },
 					grid: {
 						left: '3%',
@@ -58,7 +58,7 @@
                         {
                             type : 'value',
 							axisLabel: {
-								formatter:'{value}(值)'
+								formatter:'{value}'
                             }
 			            }
                     ],

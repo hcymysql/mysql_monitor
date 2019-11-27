@@ -10,7 +10,7 @@ $result1 = mysqli_query($con,"select ip,dbname,user,pwd,port,monitor,send_mail,s
 $r=$re=array();
 
 $sqls=array(
-	  "SHOW GLOBAL STATUS WHERE VARIABLE_NAME REGEXP 'com_select$|com_insert$|com_update$|com_delete$|Threads_connected|^uptime$|Handler_read_key|Handler_read_rnd_next'",
+	"SHOW GLOBAL STATUS WHERE VARIABLE_NAME REGEXP 'com_select$|com_insert$|com_update$|com_delete$|Threads_connected|^uptime$|Handler_read_key|Handler_read_rnd_next'",
         "SHOW GLOBAL STATUS WHERE VARIABLE_NAME REGEXP 'com_select$|com_insert$|com_update$|com_delete$|Threads_connected|^uptime$|Handler_read_key|Handler_read_rnd_next'",
         "SHOW GLOBAL VARIABLES WHERE VARIABLE_NAME REGEXP '^max_connections|^version$';",
         "SHOW SLAVE STATUS"

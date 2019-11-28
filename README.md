@@ -115,8 +115,8 @@ https://github.com/X-Mars/Zabbix-Alert-WeChat/blob/master/README.md 看此教程
 */1 * * * * cd /var/www/html/mysql_monitor/; /usr/bin/php 
 /var/www/html/mysql_monitor/check_mysql_status.php > /dev/null 2 >&1
 
-check_mysql_status.php（用来采集被监控端MySQL状态信息和触发报警）
-check_mysql_repl.php（用来采集被监控端MySQL主从复制信息和触发报警）
+# check_mysql_status.php（用来采集被监控端MySQL状态信息和触发报警）
+# check_mysql_repl.php（用来采集被监控端MySQL主从复制信息和触发报警）
 
 
 7、更改页面自动刷新频率

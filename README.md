@@ -10,8 +10,18 @@
 ![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/MySQL%E7%8A%B6%E6%80%81%E7%9B%91%E6%8E%A7.png)
 
 2、点击活动连接数，可以查看具体的连接数统计信息
+![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%AF%A6%E6%83%85.png)
 
+3、点击图表，可以查看历史曲线图
+![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/%E5%8E%86%E5%8F%B2%E6%9B%B2%E7%BA%BF%E5%9B%BE.png)
+
+4、主从状态监控
 ![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9B%91%E6%8E%A7.png)
+
+5、微信报警
+![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/%E5%BE%AE%E4%BF%A1%E6%8A%A5%E8%AD%A6.png)
+
+
 
 # 环境搭建
 

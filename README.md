@@ -81,12 +81,14 @@ threshold_alarm_threads_running字段含义：设置连接数阀值（单位个�
 
 threshold_warning_repl_delay字段含义：设置主从复制延迟阀值（单位秒）
 
+
 3、修改conn.php配置文件
 # vim /var/www/html/mysql_monitor/conn.php
 
 $con = mysqli_connect("127.0.0.1","admin","hechunyang","sql_db","3306") or die("数据库链接错误".mysql_error());
 
 改成你的MySQL Monitor监控工具表结构（sql_db库）连接信息
+
 
 
 4、修改邮件报警信息

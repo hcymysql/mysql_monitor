@@ -24,21 +24,110 @@
 ![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/%E5%BE%AE%E4%BF%A1%E6%8A%A5%E8%AD%A6.png)
 
 6、邮件报警
+
 ![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/%E9%82%AE%E4%BB%B6%E5%91%8A%E8%AD%A6.png)
 
 
-# 环境搭建
+一、环境搭建
+# yum install httpd mysql php-mysqlnd -y
+# yum install python-simplejson -y
+# service httpd start
 
-yum install python-simplejson -y
+把https://github.com/hcymysql/mysql_monitor/archive/master.zip安装包解压缩到
+/var/www/html/目录下
 
-chmod -R 755  ./mail/sendEmail
-chmod -R 755  ./weixin/wechat.py
+# cd /var/www/html/mysql_monitor/
+# chmod 755 ./mail/sendEmail 
+# chmod 755 ./weixin/wechat.py
+（注：邮件和微信报警调用的第三方工具，所以这里要赋予可执行权限755）
 
-# check_mysql_status.php（用来采集被监控端MySQL状态信息）
-# check_mysql_repl.php（用来采集被监控端MySQL主从复制信息）
+二、MySQL Monitor监控工具搭建
+1、导入MySQL Monitor监控工具表结构（sql_db库）
+# cd  /var/www/html/mysql_monitor/
+# mysql  -uroot  -p123456  <  mysql_monitor_schema.sql
 
-定时任务每分钟抓取一次
+2、录入被监控主机的信息
+mysql>insert  into 
+`mysql_status_info`(`id`,`ip`,`dbname`,`user`,`pwd`,`port`,`monitor`,`send_mail`,`sen
+d_mail_to_list`,`send_weixin`,`send_weixin_to_list`,`alarm_threads_running`,`thresh
+old_alarm_threads_running`,`alarm_repl_status`,`threshold_warning_repl_delay`) 
+values 
+(1,'127.0.0.1','sql_db','admin','hechunyang',3306,1,1,'chunyang_he@139.com,chu
+nyang_he@126.com',1,'hechunyang',NULL,NULL,NULL,NULL);
 
-*/1 * * * * cd /var/www/html/mysql_monitor/; /usr/bin/php /var/www/html/mysql_monitor/check_mysql_repl.php > /dev/null 2 >&1
+注，以下字段可以按照需求变更：
+ip字段含义：输入被监控MySQL的IP地址
 
-*/1 * * * * cd /var/www/html/mysql_monitor/; /usr/bin/php /var/www/html/mysql_monitor/check_mysql_status.php > /dev/null 2 >&1
+dbname字段含义：输入被监控MySQL的数据库名
+
+user字段含义：输入被监控MySQL的用户名（最好给ALL管理员权限）
+
+pwd字段含义：输入被监控MySQL的密码
+
+port字段含义：输入被监控MySQL的端口号
+
+monitor字段含义：0为关闭监控（也不采集数据，直接跳过）;1为开启监控（采集数据）
+
+send_mail字段含义：0为关闭邮件报警;1为开启邮件报警
+
+send_mail_to_list字段含义：邮件人列表
+
+send_weixin字段含义：0为关闭微信报警;1为开启微信报警
+
+send_weixin_to_list字段含义：微信公众号
+
+threshold_alarm_threads_running字段含义：设置连接数阀值（单位个）
+
+threshold_warning_repl_delay字段含义：设置主从复制延迟阀值（单位秒）
+
+3、修改conn.php配置文件
+# vim /var/www/html/mysql_monitor/conn.php
+
+$con = mysqli_connect("127.0.0.1","admin","hechunyang","sql_db","3306") or die("数据库链接错误".mysql_error());
+
+改成你的MySQL Monitor监控工具表结构（sql_db库）连接信息
+
+
+4、修改邮件报警信息
+# cd /var/www/html/mysql_monitor/mail/
+# vim mail.php
+
+system("./mail/sendEmail -f chunyang_he@139.com -t '{$this->send_mail_to_list}' -s 
+smtp.139.com:25 -u '{$this->alarm_subject}' -o message-charset=utf8 -o message-content-type=html -m '报警信息：<br><font 
+color='#FF0000'>{$this->alarm_info}</font>' -xu chunyang_he@139.com -xp 
+'WDhcy159753@' -o tls=no");
+
+改成你的发件人地址，账号密码，里面的变量不用修改。
+
+
+5、修改微信报警信息
+# cd /var/www/html/mysql_monitor/weixin/
+# vim wechat.py
+微信企业号设置移步
+https://github.com/X-Mars/Zabbix-Alert-WeChat/blob/master/README.md 看此教程配置。
+
+6、定时任务每分钟抓取一次
+# crontab -l
+*/1 * * * * cd /var/www/html/mysql_monitor/; /usr/bin/php 
+/var/www/html/mysql_monitor/check_mysql_repl.php > /dev/null 2 >&1
+
+*/1 * * * * cd /var/www/html/mysql_monitor/; /usr/bin/php 
+/var/www/html/mysql_monitor/check_mysql_status.php > /dev/null 2 >&1
+
+check_mysql_status.php（用来采集被监控端MySQL状态信息和触发报警）
+check_mysql_repl.php（用来采集被监控端MySQL主从复制信息和触发报警）
+
+
+7、更改页面自动刷新频率
+# vim mysql_status_monitor.php
+
+<meta http-equiv="refresh" content="600" />  <!-- 页面刷新时间600秒 -->
+默认页面每600秒自动刷新一次。
+
+
+8、页面访问
+http://yourIP/mysql_monitor/mysql_status_monitor.php
+http://yourIP/mysql_monitor/mysql_repl_monitor.php
+
+加一个超链接，可方便地接入你们的自动化运维平台里。
+

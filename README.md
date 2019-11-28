@@ -42,11 +42,13 @@
 （注：邮件和微信报警调用的第三方工具，所以这里要赋予可执行权限755）
 
 二、MySQL Monitor监控工具搭建
+
 1、导入MySQL Monitor监控工具表结构（sql_db库）
 # cd  /var/www/html/mysql_monitor/
 # mysql  -uroot  -p123456  <  mysql_monitor_schema.sql
 
 2、录入被监控主机的信息
+
 mysql>insert  into 
 `mysql_status_info`(`id`,`ip`,`dbname`,`user`,`pwd`,`port`,`monitor`,`send_mail`,`sen
 d_mail_to_list`,`send_weixin`,`send_weixin_to_list`,`alarm_threads_running`,`thresh
@@ -83,6 +85,7 @@ threshold_warning_repl_delay字段含义：设置主从复制延迟阀值（单�
 
 
 3、修改conn.php配置文件
+
 # vim /var/www/html/mysql_monitor/conn.php
 
 $con = mysqli_connect("127.0.0.1","admin","hechunyang","sql_db","3306") or die("数据库链接错误".mysql_error());
@@ -92,6 +95,7 @@ $con = mysqli_connect("127.0.0.1","admin","hechunyang","sql_db","3306") or die("
 
 
 4、修改邮件报警信息
+
 # cd /var/www/html/mysql_monitor/mail/
 # vim mail.php
 
@@ -104,12 +108,14 @@ color='#FF0000'>{$this->alarm_info}</font>' -xu chunyang_he@139.com -xp
 
 
 5、修改微信报警信息
+
 # cd /var/www/html/mysql_monitor/weixin/
 # vim wechat.py
 微信企业号设置移步
 https://github.com/X-Mars/Zabbix-Alert-WeChat/blob/master/README.md 看此教程配置。
 
 6、定时任务每分钟抓取一次
+
 # crontab -l
 */1 * * * * cd /var/www/html/mysql_monitor/; /usr/bin/php 
 /var/www/html/mysql_monitor/check_mysql_repl.php > /dev/null 2 >&1
@@ -122,6 +128,7 @@ https://github.com/X-Mars/Zabbix-Alert-WeChat/blob/master/README.md 看此教程
 
 
 7、更改页面自动刷新频率
+
 # vim mysql_status_monitor.php
 
 http-equiv="refresh" content="600"
@@ -130,6 +137,7 @@ http-equiv="refresh" content="600"
 
 
 8、页面访问
+
 http://yourIP/mysql_monitor/mysql_status_monitor.php
 http://yourIP/mysql_monitor/mysql_repl_monitor.php
 

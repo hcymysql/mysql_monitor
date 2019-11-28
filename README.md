@@ -56,6 +56,7 @@ values
 nyang_he@126.com',1,'hechunyang',NULL,NULL,NULL,NULL);
 
 注，以下字段可以按照需求变更：
+
 ip字段含义：输入被监控MySQL的IP地址
 
 dbname字段含义：输入被监控MySQL的数据库名

@@ -121,7 +121,9 @@ https://github.com/X-Mars/Zabbix-Alert-WeChat/blob/master/README.md 看此教程
 
 7、更改页面自动刷新频率
 # vim mysql_status_monitor.php
+
 http-equiv="refresh" content="600"
+
 默认页面每600秒自动刷新一次。
 
 

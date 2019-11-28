@@ -19,7 +19,7 @@
     <meta http-equiv="Content-Type"  content="text/html;  charset=UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta http-equiv="refresh" content="600" /> <!-- 页面刷新时间600秒 -->
+    <meta http-equiv="refresh" content="600" />  <!-- 页面刷新时间600秒 -->
     <title>MySQL 状态监控</title>
 
 <style type="text/css">
@@ -178,8 +178,8 @@ echo "<td>{$row['8']}</td>";
 echo "<td>{$row['9']}</td>";
 echo "<td>{$row['10']}</td>";
 echo "<td>{$row['11']}</td>";
-echo "<td>{$row['12']} 天</td>";
-echo "<td>{$row['13']}</td>";
+echo "<td>{$row['14']} 天</td>";
+echo "<td>{$row['15']}</td>";
 echo "<td><a href='javascript:void(0);' onclick=\"x_admin_show('历史信息图表','show_graph.php?ip={$row['1']}&dbname={$row['2']}&port={$row['3']}')\"><img src='image/chart.gif' /></a></td>";
 echo "</tr>";
 }

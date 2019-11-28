@@ -15,7 +15,7 @@
 3、点击图表，可以查看历史曲线图
 ![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/%E5%8E%86%E5%8F%B2%E6%9B%B2%E7%BA%BF%E5%9B%BE.png)
 
-4、主从状态监控
+4、主从复制状态监控
 
 ![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9B%91%E6%8E%A7.png)
 

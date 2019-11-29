@@ -71,7 +71,15 @@ return true;
 	require 'conn.php';
 	$result = mysqli_query($con,"SELECT dbname FROM mysql_status_info GROUP BY dbname ORDER BY dbname ASC");
 	while($row = mysqli_fetch_array($result)){
-		echo "<option value=\"".$row[0]."\">".$row[0]."</option>"."<br>";
+		//保留下拉列表框选项
+                    if(isset($_POST['dbname']) || isset($_GET['dbname'])){
+                        if($_POST['dbname'] == $row[0] || $_GET['dbname'] == $row[0]){
+                            echo "<option selected='selected' value=\"".$row[0]."\">".$row[0]."</option>"."<br>";
+                        } else {
+                            echo "<option value=\"".$row[0]."\">".$row[0]."</option>"."<br>";
+                        }
+                    } else{ echo "<option value=\"".$row[0]."\">".$row[0]."</option>"."<br>";}
+		//echo "<option value=\"".$row[0]."\">".$row[0]."</option>"."<br>";
     	}
 	
     ?>

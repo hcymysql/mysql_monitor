@@ -139,6 +139,7 @@ http-equiv="refresh" content="600"
 8、页面访问
 
 http://yourIP/mysql_monitor/mysql_status_monitor.php
+
 http://yourIP/mysql_monitor/mysql_repl_monitor.php
 
 加一个超链接，可方便地接入你们的自动化运维平台里。

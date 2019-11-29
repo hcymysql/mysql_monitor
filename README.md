@@ -102,7 +102,7 @@ $con = mysqli_connect("127.0.0.1","admin","hechunyang","sql_db","3306") or die("
 system("./mail/sendEmail -f chunyang_he@139.com -t '{$this->send_mail_to_list}' -s 
 smtp.139.com:25 -u '{$this->alarm_subject}' -o message-charset=utf8 -o message-content-type=html -m '报警信息：<br><font 
 color='#FF0000'>{$this->alarm_info}</font>' -xu chunyang_he@139.com -xp 
-'WDhcy159753@' -o tls=no");
+'123456' -o tls=no");
 
 改成你的发件人地址，账号密码，里面的变量不用修改。
 

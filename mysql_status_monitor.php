@@ -48,6 +48,7 @@ function TestBlack(TagName){
 }
 </script>
 
+<!--
 <script>
 function ss(){
 var slt=document.getElementById("select");
@@ -58,6 +59,7 @@ if(slt.value==""){
 return true;
 }
 </script>
+-->
 </head>
 
 <body>
@@ -72,8 +74,10 @@ return true;
 <form action="" method="post" name="sql_statement" id="form1" onsubmit=" return ss()">
   <div>
     <tr>
-        <td><select id="select" name="dbname">
-	<option value="">选择你的数据库</option>
+        <td><p align='left'>输入IP地址:
+ 	   <input type='text' name='dbip' value=''>	
+           <select id="select" name="dbname">
+	     <option value="">选择你的数据库</option>
 	<?php
 	
 	require 'conn.php';
@@ -83,7 +87,10 @@ return true;
     }
 	
     ?>
-        </select><td>
+        </select>
+            &nbsp;&nbsp;输入MySQL端口号:
+           <input type='text' name='dbport' value=''>
+<td>
     </tr>
     <input name="submit" type="submit" class="STYLE3" value="搜索" />
     </label>
@@ -101,6 +108,8 @@ echo "</table>";
 	
     if(isset($_POST['submit'])){
         $dbname=$_POST['dbname'];
+        $dbip=$_POST['ip'];
+        $dbport=$_POST['dbport'];
         //session_start();
 	//$_SESSION['transmit_dbname']=$dbname;
         //require 'show.html';
@@ -147,11 +156,18 @@ if (empty($page)) {
 
 $startCount=($page-1)*$perNumber; //分页开始,根据此方法计算出开始的记录 
 
-if(!empty($dbname)){
-$sql = "SELECT * FROM mysql_status WHERE dbname='{$dbname}' order by id ASC LIMIT $startCount,$perNumber";
-} else {
-$sql = "SELECT * FROM mysql_status order by id ASC LIMIT $startCount,$perNumber";
-}
+    $condition.="1=1 ";	
+    if(!empty($dbname)){
+    	$condition.="AND dbname='{$dbname}'";
+    }
+    if(!empty($dbip)){
+    	$condition.="AND ip='{$dbip}'";
+    }
+    if(!empty($dbport)){
+    	$condition.="AND port='{$dbport}'";
+    }
+	$sql = "SELECT * FROM mysql_status WHERE $condition order by id ASC LIMIT $startCount,$perNumber";
+ 	//echo $sql."<br>";   
 
 $result = mysqli_query($con,$sql);
 

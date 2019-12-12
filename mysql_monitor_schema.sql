@@ -2,7 +2,8 @@
 SQLyog Professional v10.42 
 MySQL - 8.0.18 : Database - sql_db
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -116,9 +117,9 @@ CREATE TABLE `mysql_status_info` (
   `send_weixin` tinyint(4) DEFAULT '1' COMMENT '0为关闭微信报警;1为开启微信报警',
   `send_weixin_to_list` varchar(100) DEFAULT NULL COMMENT '微信公众号',
   `alarm_threads_running` tinyint(4) DEFAULT NULL COMMENT '记录活动连接数告警信息，1为已记录',
-  `threshold_alarm_threads_running` tinyint(4) DEFAULT NULL COMMENT '设置连接数阀值',
+  `threshold_alarm_threads_running` int(11) DEFAULT NULL COMMENT '设置连接数阀值',
   `alarm_repl_status` tinyint(4) DEFAULT NULL COMMENT '记录主从复制告警信息，1为记录主从状态，3为记录主从延迟状态',
-  `threshold_warning_repl_delay` tinyint(4) DEFAULT NULL COMMENT '设置主从复制延迟阀值',
+  `threshold_warning_repl_delay` int(11) DEFAULT NULL COMMENT '设置主从复制延迟阀值',
   PRIMARY KEY (`id`),
   KEY `IX_i_d_p` (`ip`,`dbname`,`port`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='监控信息表';

@@ -61,7 +61,7 @@ do {
     }
 } while ($processed < count($all_links));
 	echo "---------------------------"."\n";
-      //print_r($re);  //调试
+        print_r($re);  //调试
 	
 //报警和入库采集数据	
 	$role=!isset(end($re)['Waiting for master to send event'])?1:0;
@@ -147,7 +147,7 @@ do {
         	  echo "被监控主机：$ip  【{$dbname}库】关闭邮件监控报警。"."\n";
 	    } else {
 	    	    $alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】活动连接数超高，请检查。 ".date("Y-m-d H:i:s");
-	    	    $alarm_info = "被监控主机：".$ip."  【{$dbname}库】活动连接数是{end($re)['Threads_connected']}，高于报警阀值{$threshold_alarm_threads_running}";
+	    	    $alarm_info = "被监控主机：".$ip."  【{$dbname}库】活动连接数是 ".end($re)['Threads_connected'] ."，高于报警阀值{$threshold_alarm_threads_running}";
 	    	    $sendmail = new mail($send_mail_to_list,$alarm_subject,$alarm_info);
                 $sendmail->execCommand();
 	    }
@@ -156,7 +156,7 @@ do {
         	  echo "被监控主机：$ip  【{$dbname}库】关闭微信监控报警。"."\n";
 	    } else {
 	    	    $alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】活动连接数超高，请检查。 ".date("Y-m-d H:i:s");
-	    	    $alarm_info = "被监控主机：".$ip."  【{$dbname}库】活动连接数是{end($re)['Threads_connected']}，高于报警阀值{$threshold_alarm_threads_running}";
+	    	    $alarm_info = "被监控主机：".$ip."  【{$dbname}库】活动连接数是 ".end($re)['Threads_connected'] ."，高于报警阀值{$threshold_alarm_threads_running}";
 	    	    $sendweixin = new weixin($send_weixin_to_list,$alarm_subject,$alarm_info);
                 $sendweixin->execCommand();
 	    }	    
@@ -179,7 +179,7 @@ do {
 	      }
 	      if(!empty($recover_threads_row['alarm_threads_running']) && $recover_threads_row['alarm_threads_running'] == 1){
 		    $recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】活动连接数已恢复 ".date("Y-m-d H:i:s");
-		    $recover_info = "被监控主机：".$ip."  【{$dbname}库】活动连接数已恢复，当前连接数是{$re['Threads_connected']}";
+		    $recover_info = "被监控主机：".$ip."  【{$dbname}库】活动连接数已恢复，当前连接数是 ".$re['Threads_connected'];
 		    if($send_mail==1 ){
 			  $sendmail = new mail($send_mail_to_list,$recover_subject,$recover_info);
 			  $sendmail->execCommand();

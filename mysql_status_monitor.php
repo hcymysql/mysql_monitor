@@ -117,7 +117,7 @@ echo "</table>";
 	
     if(isset($_POST['submit'])){
         $dbname=$_POST['dbname'];
-        $dbip=$_POST['ip'];
+        $dbip=$_POST['dbip'];
         $dbport=$_POST['dbport'];
         //session_start();
 	//$_SESSION['transmit_dbname']=$dbname;
@@ -170,7 +170,7 @@ $startCount=($page-1)*$perNumber; //分页开始,根据此方法计算出开始�
     	$condition.="AND dbname='{$dbname}'";
     }
     if(!empty($dbip)){
-    	$condition.="AND ip='{$dbip}'";
+    	$condition.="AND host='{$dbip}'";
     }
     if(!empty($dbport)){
     	$condition.="AND port='{$dbport}'";

@@ -179,7 +179,7 @@ do {
 	      }
 	      if(!empty($recover_threads_row['alarm_threads_running']) && $recover_threads_row['alarm_threads_running'] == 1){
 		    $recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】活动连接数已恢复 ".date("Y-m-d H:i:s");
-		    $recover_info = "被监控主机：".$ip."  【{$dbname}库】活动连接数已恢复，当前连接数是 ".$re['Threads_connected'];
+		    $recover_info = "被监控主机：".$ip."  【{$dbname}库】活动连接数已恢复，当前连接数是 ".end($re)['Threads_connected'];
 		    if($send_mail==1 ){
 			  $sendmail = new mail($send_mail_to_list,$recover_subject,$recover_info);
 			  $sendmail->execCommand();

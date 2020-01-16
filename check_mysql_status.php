@@ -17,7 +17,13 @@ $sqls=array(
       );
 
 while( list($ip,$dbname,$user,$pwd,$port,$monitor,$send_mail,$send_mail_to_list,$send_weixin,$send_weixin_to_list,$threshold_alarm_threads_running) = mysqli_fetch_array($result1))
-{		
+{
+	
+if($monitor==0 || empty($monitor)){
+        echo "\n被监控主机：$ip  【{$dbname}库】未开启监控，跳过不检测。"."\n";
+        continue;
+}
+	
 $all_links  = array();
 
 foreach ($sqls as $sql) { 

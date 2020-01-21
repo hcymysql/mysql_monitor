@@ -20,7 +20,7 @@ while( list($ip,$dbname,$user,$pwd,$port,$monitor,$send_mail,$send_mail_to_list,
 {
 	
 if($monitor==0 || empty($monitor)){
-        echo "\n被监控主机：$ip  【{$dbname}库】未开启监控，跳过不检测。"."\n";
+        echo "\n被监控主机：$ip  【{$dbname}库】【端口{$port}】未开启监控，跳过不检测。"."\n";
         continue;
 }
 	
@@ -95,18 +95,18 @@ do {
 
 	    //告警---------------------  
 	    if($send_mail==0 || empty($send_mail)){
-        	echo "被监控主机：$ip  【{$dbname}库】关闭邮件监控报警。"."\n";
+        	echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭邮件监控报警。"."\n";
 	    } else {
-	    	$alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】不能连接 ".date("Y-m-d H:i:s");
-	    	$alarm_info = "被监控主机：".$ip."  【{$dbname}库】不能连接，请检查!";
+	    	$alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】不能连接 ".date("Y-m-d H:i:s");
+	    	$alarm_info = "被监控主机：".$ip."  【{$dbname}库】【端口{$port}】不能连接，请检查!";
 	    	$sendmail = new mail($send_mail_to_list,$alarm_subject,$alarm_info);
             $sendmail->execCommand();
 	    }
 	    if($send_weixin==0 || empty($send_weixin)){
-		echo "被监控主机：$ip  【{$dbname}库】关闭微信监控报警。"."\n";
+		echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭微信监控报警。"."\n";
 	    } else {
-		$alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】不能连接 ".date("Y-m-d H:i:s");
-		$alarm_info = "被监控主机：".$ip."  【{$dbname}库】不能连接，请检查!";
+		$alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】不能连接 ".date("Y-m-d H:i:s");
+		$alarm_info = "被监控主机：".$ip."  【{$dbname}库】【端口{$port}】不能连接，请检查!";
 		$sendweixin = new weixin($send_weixin_to_list,$alarm_subject,$alarm_info);
 		$sendweixin->execCommand();
 	    }
@@ -115,29 +115,29 @@ do {
 	} else {
 	    //恢复---------------------
             if($send_mail==0 || empty($send_mail)){
-                echo "被监控主机：$ip  【{$dbname}库】关闭邮件监控报警。"."\n";
+                echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭邮件监控报警。"."\n";
             } else {
 	    	$recover_sql = "SELECT is_live FROM mysql_status_history WHERE HOST='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}' ORDER BY create_time DESC LIMIT 1";
 	    	$recover_result = mysqli_query($con, $recover_sql);
 	    	$recover_row = mysqli_fetch_assoc($recover_result);
 	    }
 	    if(!empty($recover_row) && $recover_row['is_live']==0){
-		$recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】已恢复 ".date("Y-m-d H:i:s");
-		$recover_info = "被监控主机：".$ip."  【{$dbname}库】已恢复";
+		$recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】已恢复 ".date("Y-m-d H:i:s");
+		$recover_info = "被监控主机：".$ip."  【{$dbname}库】【端口{$port}】已恢复";
 		$sendmail = new mail($send_mail_to_list,$recover_subject,$recover_info);
 		$sendmail->execCommand();
 	    }
 
 	    if($send_weixin==0 || empty($send_weixin)){
-		echo "被监控主机：$ip  【{$dbname}库】关闭微信监控报警。"."\n";
+		echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭微信监控报警。"."\n";
 	    } else {
 		$recover_sql = "SELECT is_live FROM mysql_status_history WHERE HOST='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}' ORDER BY create_time DESC LIMIT 1
 ";              $recover_result = mysqli_query($con, $recover_sql);
                   $recover_row = mysqli_fetch_assoc($recover_result);
 	    }
             if(!empty($recover_row) && $recover_row['is_live']==0){
-                $recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】已恢复 ".date("Y-m-d H:i:s");
-                $recover_info = "被监控主机：".$ip."  【{$dbname}库】已恢复";
+                $recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】已恢复 ".date("Y-m-d H:i:s");
+                $recover_info = "被监控主机：".$ip."  【{$dbname}库】【端口{$port}】已恢复";
                 $sendweixin = new weixin($send_weixin_to_list,$recover_subject,$recover_info);
                 $sendweixin->execCommand();
             }
@@ -150,19 +150,19 @@ do {
       if(!empty($threshold_alarm_threads_running) && end($re)['Threads_connected'] >=$threshold_alarm_threads_running){
 	    //告警---------------------  
 	    if($send_mail==0 || empty($send_mail)){
-        	  echo "被监控主机：$ip  【{$dbname}库】关闭邮件监控报警。"."\n";
+        	  echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭邮件监控报警。"."\n";
 	    } else {
-	    	    $alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】活动连接数超高，请检查。 ".date("Y-m-d H:i:s");
-	    	    $alarm_info = "被监控主机：".$ip."  【{$dbname}库】活动连接数是 ".end($re)['Threads_connected'] ."，高于报警阀值{$threshold_alarm_threads_running}";
+	    	    $alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】活动连接数超高，请检查。 ".date("Y-m-d H:i:s");
+	    	    $alarm_info = "被监控主机：".$ip."  【{$dbname}库】【端口{$port}】活动连接数是 ".end($re)['Threads_connected'] ."，高于报警阀值{$threshold_alarm_threads_running}";
 	    	    $sendmail = new mail($send_mail_to_list,$alarm_subject,$alarm_info);
                 $sendmail->execCommand();
 	    }
 
 	    if($send_weixin==0 || empty($send_weixin)){
-        	  echo "被监控主机：$ip  【{$dbname}库】关闭微信监控报警。"."\n";
+        	  echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭微信监控报警。"."\n";
 	    } else {
-	    	    $alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】活动连接数超高，请检查。 ".date("Y-m-d H:i:s");
-	    	    $alarm_info = "被监控主机：".$ip."  【{$dbname}库】活动连接数是 ".end($re)['Threads_connected'] ."，高于报警阀值{$threshold_alarm_threads_running}";
+	    	    $alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】活动连接数超高，请检查。 ".date("Y-m-d H:i:s");
+	    	    $alarm_info = "被监控主机：".$ip."  【{$dbname}库】【端口{$port}】活动连接数是 ".end($re)['Threads_connected'] ."，高于报警阀值{$threshold_alarm_threads_running}";
 	    	    $sendweixin = new weixin($send_weixin_to_list,$alarm_subject,$alarm_info);
                 $sendweixin->execCommand();
 	    }	    
@@ -173,10 +173,10 @@ do {
 	}  else {
 	    //恢复---------------------
             if($send_mail==0 || empty($send_mail)){
-                echo "被监控主机：$ip  【{$dbname}库】关闭邮件监控报警。"."\n";
+                echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭邮件监控报警。"."\n";
             } 
             if($send_weixin==0 || empty($send_weixin)){
-                echo "被监控主机：$ip  【{$dbname}库】关闭微信监控报警。"."\n";
+                echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭微信监控报警。"."\n";
             }
 	      if(($send_mail==1 || $send_weixin==1)){
 		    $recover_threads = "SELECT alarm_threads_running FROM mysql_status_info WHERE IP='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}' ";
@@ -184,8 +184,8 @@ do {
 	    	    $recover_threads_row = mysqli_fetch_assoc($recover_threads);
 	      }
 	      if(!empty($recover_threads_row['alarm_threads_running']) && $recover_threads_row['alarm_threads_running'] == 1){
-		    $recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】活动连接数已恢复 ".date("Y-m-d H:i:s");
-		    $recover_info = "被监控主机：".$ip."  【{$dbname}库】活动连接数已恢复，当前连接数是 ".end($re)['Threads_connected'];
+		    $recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】活动连接数已恢复 ".date("Y-m-d H:i:s");
+		    $recover_info = "被监控主机：".$ip."  【{$dbname}库】【端口{$port}】活动连接数已恢复，当前连接数是 ".end($re)['Threads_connected'];
 		    if($send_mail==1 ){
 			  $sendmail = new mail($send_mail_to_list,$recover_subject,$recover_info);
 			  $sendmail->execCommand();

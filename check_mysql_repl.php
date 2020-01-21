@@ -89,18 +89,18 @@ do {
 			 echo "【报错】主从同步复制Slave_IO_Running状态是：{$re['Slave_IO_Running']}; Slave_SQL_Running状态是：{$re['Slave_SQL_Running']}\n";
 	    //告警---------------------  
 	    if($send_mail==0 || empty($send_mail)){
-			echo "被监控主机：$ip  【{$dbname}库】关闭邮件监控报警。"."\n";
+			echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭邮件监控报警。"."\n";
 	    } else {
-	    	$alarm_subject = "【报错】被监控主机：".$ip."  【{$dbname}库】主从同步复制异常 ".date("Y-m-d H:i:s");
-	    	$alarm_info = "被监控主机：".$ip."   【{$dbname}库】主从同步复制Slave_IO_Running状态是：{$re['Slave_IO_Running']}; Slave_SQL_Running状态是：{$re['Slave_SQL_Running']}";
+	    	$alarm_subject = "【报错】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】主从同步复制异常 ".date("Y-m-d H:i:s");
+	    	$alarm_info = "被监控主机：".$ip."   【{$dbname}库】【端口{$port}】主从同步复制Slave_IO_Running状态是：{$re['Slave_IO_Running']}; Slave_SQL_Running状态是：{$re['Slave_SQL_Running']}";
 	    	$sendmail = new mail($send_mail_to_list,$alarm_subject,$alarm_info);
                 $sendmail->execCommand();
 	    }
 	    if($send_weixin==0 || empty($send_weixin)){
-		echo "被监控主机：$ip  【{$dbname}库】关闭微信监控报警。"."\n";
+		echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭微信监控报警。"."\n";
 	    } else {
-		$alarm_subject = "【报错】被监控主机：".$ip."  【{$dbname}库】主从同步复制异常 ".date("Y-m-d H:i:s");
-		$alarm_info = "被监控主机：".$ip."   【{$dbname}库】主从同步复制Slave_IO_Running状态是：{$re['Slave_IO_Running']}; Slave_SQL_Running状态是：{$re['Slave_SQL_Running']}";
+		$alarm_subject = "【报错】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】主从同步复制异常 ".date("Y-m-d H:i:s");
+		$alarm_info = "被监控主机：".$ip."   【{$dbname}库】【端口{$port}】主从同步复制Slave_IO_Running状态是：{$re['Slave_IO_Running']}; Slave_SQL_Running状态是：{$re['Slave_SQL_Running']}";
 		$sendweixin = new weixin($send_weixin_to_list,$alarm_subject,$alarm_info);
 		$sendweixin->execCommand();
 	    }
@@ -111,10 +111,10 @@ do {
 	    }  else  {     
 	    //恢复---------------------
             if($send_mail==0 || empty($send_mail)){
-                echo "被监控主机：$ip  【{$dbname}库】关闭邮件监控报警。"."\n";
+                echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭邮件监控报警。"."\n";
             } 
             if($send_weixin==0 || empty($send_weixin)){
-                echo "被监控主机：$ip  【{$dbname}库】关闭微信监控报警。"."\n";
+                echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭微信监控报警。"."\n";
             }
 	      if(($send_mail==1 || $send_weixin==1)){
 		    $recover_repl_status_sql = "SELECT alarm_repl_status FROM mysql_status_info WHERE IP='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}' ";
@@ -122,7 +122,7 @@ do {
 	    	    $recover_repl_status_row = mysqli_fetch_assoc($recover_repl_status);
 	      }			
 	    if(!empty($recover_repl_status_row['alarm_repl_status']) && $recover_repl_status_row['alarm_repl_status'] == 1 ){
-		    $recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】主从同步复制已恢复 ".date("Y-m-d H:i:s");
+		    $recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】主从同步复制已恢复 ".date("Y-m-d H:i:s");
 		    $recover_info = "主从同步复制Slave_IO_Running状态是：{$re['Slave_IO_Running']}; Slave_SQL_Running状态是：{$re['Slave_SQL_Running']}";
 		    if($send_mail==1 ){
 			  $sendmail = new mail($send_mail_to_list,$recover_subject,$recover_info);
@@ -144,18 +144,18 @@ do {
 	   echo "【告警】 【{$dbname}库】主从同步延迟{$re['Seconds_Behind_Master']}秒\n";
 	    //告警---------------------  
 	    if($send_mail==0 || empty($send_mail)){
-			echo "被监控主机：$ip  【{$dbname}库】关闭邮件监控报警。"."\n";
+			echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭邮件监控报警。"."\n";
 	    } else {
-	    	$alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】主从同步延迟 ".date("Y-m-d H:i:s");
-	    	$alarm_info = "被监控主机：".$ip."   【{$dbname}库】主从同步延迟{$re['Seconds_Behind_Master']}秒";
+	    	$alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】主从同步延迟 ".date("Y-m-d H:i:s");
+	    	$alarm_info = "被监控主机：".$ip."   【{$dbname}库】【端口{$port}】主从同步延迟{$re['Seconds_Behind_Master']}秒";
 	    	$sendmail = new mail($send_mail_to_list,$alarm_subject,$alarm_info);
                 $sendmail->execCommand();
 	    }
 	    if($send_weixin==0 || empty($send_weixin)){
-		echo "被监控主机：$ip  【{$dbname}库】关闭微信监控报警。"."\n";
+		echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭微信监控报警。"."\n";
 	    } else {
-		$alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】主从同步延迟 ".date("Y-m-d H:i:s");
-		$alarm_info = "被监控主机：".$ip."   【{$dbname}库】主从同步延迟{$re['Seconds_Behind_Master']}秒";
+		$alarm_subject = "【告警】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】主从同步延迟 ".date("Y-m-d H:i:s");
+		$alarm_info = "被监控主机：".$ip."   【{$dbname}库】【端口{$port}】主从同步延迟{$re['Seconds_Behind_Master']}秒";
 		$sendweixin = new weixin($send_weixin_to_list,$alarm_subject,$alarm_info);
 		$sendweixin->execCommand();
 	    }
@@ -167,10 +167,10 @@ do {
 	   else {
 	    //恢复---------------------
             if($send_mail==0 || empty($send_mail)){
-                echo "被监控主机：$ip  【{$dbname}库】关闭邮件监控报警。"."\n";
+                echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭邮件监控报警。"."\n";
             } 
             if($send_weixin==0 || empty($send_weixin)){
-                echo "被监控主机：$ip  【{$dbname}库】关闭微信监控报警。"."\n";
+                echo "被监控主机：$ip  【{$dbname}库】【端口{$port}】关闭微信监控报警。"."\n";
             }
 	      if(($send_mail==1 || $send_weixin==1)){
 		    $recover_repl_status_sql = "SELECT alarm_repl_status FROM mysql_status_info WHERE IP='{$ip}' AND dbname='{$dbname}' AND PORT='{$port}' ";
@@ -178,7 +178,7 @@ do {
 	    	    $recover_repl_status_row = mysqli_fetch_assoc($recover_repl_status);
 	      }			
 	    if(!empty($recover_repl_status_row['alarm_repl_status']) && $recover_repl_status_row['alarm_repl_status'] == 3 ){
-		    $recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】主从同步延迟已恢复 ".date("Y-m-d H:i:s");
+		    $recover_subject = "【恢复】被监控主机：".$ip."  【{$dbname}库】【端口{$port}】主从同步延迟已恢复 ".date("Y-m-d H:i:s");
 		    $recover_info = "主从同步延迟{$re['Seconds_Behind_Master']}秒";
 		    if($send_mail==1 ){
 			  $sendmail = new mail($send_mail_to_list,$recover_subject,$recover_info);

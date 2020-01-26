@@ -104,7 +104,7 @@ echo "</table>";
 	
     if(isset($_POST['submit'])){
         $dbname=$_POST['dbname'];
-        $dbip=$_POST['ip'];
+        $dbip=$_POST['dbip'];
         $dbport=$_POST['dbport'];
         //session_start();
 	//$_SESSION['transmit_dbname']=$dbname;

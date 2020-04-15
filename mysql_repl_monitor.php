@@ -20,6 +20,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="refresh" content="600" />
     <title>MySQL 主从复制监控</title>
+	
+    <style type="text/css">
+	a:link { text-decoration: none;color: #3366FF}
+	a:active { text-decoration:blink;color: green}
+	a:hover { text-decoration:underline;color: #6600FF}
+	a:visited { text-decoration: none;color: green}
+    </style>
+		
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="./css/font-awesome/css/fontawesome-all.min.css">

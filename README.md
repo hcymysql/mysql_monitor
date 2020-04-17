@@ -33,6 +33,11 @@
 # yum install python-simplejson -y
 # service httpd start
 
+# 注：必须依赖php-mysqlnd驱动扩展，系统自带的php-mysql要卸载掉，可参考下面的文章进行yum安装
+# Linux上安装php-mysqlnd扩展实例
+http://www.php.cn/php-weizijiaocheng-387963.html
+
+
 把https://github.com/hcymysql/mysql_monitor/archive/master.zip安装包解压缩到
 /var/www/html/目录下
 

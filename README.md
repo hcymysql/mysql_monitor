@@ -27,6 +27,9 @@
 
 ![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/%E9%82%AE%E4%BB%B6%E5%91%8A%E8%AD%A6.png)
 
+# 2020-04-23更新，增加统计库里每个表的大小
+![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/image/table_info.png)
+
 
 一、环境搭建
 # yum install httpd mysql php-mysqlnd -y

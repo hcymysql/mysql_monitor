@@ -76,6 +76,7 @@ return true;
     <tr>
         <td><p align='left'>输入IP地址:
  	   <input type='text' name='dbip' value=''>	
+
            <select id="select" name="dbname">
 	     <option value="">选择你的数据库</option>
 	<?php
@@ -97,6 +98,32 @@ return true;
 	
     ?>
         </select>
+
+	<select id="select" name="dbrole">
+	    <option value="">选择角色</option>
+	<?php
+	    require 'conn.php';
+            $result = mysqli_query($con,"SELECT DISTINCT(role) FROM mysql_status");	
+            while($row = mysqli_fetch_array($result)){
+		//$dbrole_original=$row[0];
+		//$dbrole=$row[0]==1?'主':'从';
+                //保留下拉列表框选项
+                    if(isset($_POST['dbrole']) || isset($_GET['dbrole'])){
+			//$dbrole=$row[0]==1?'是':'否';
+                        if($_POST['dbrole'] == $row[0] || $_GET['dbrole'] == $row[0]){
+			    //$dbrole=$row[0]==1?'是':'否';
+                            echo "<option selected='selected' value=\"".$row[0]."\">".$row[0]."</option>"."<br>";
+                        } else { 
+                            echo "<option value=\"".$row[0]."\">".$row[0]."</option>"."<br>";
+                        }
+                    } else{ echo "<option value=\"".$row[0]."\">".$row[0]."</option>"."<br>";}
+                
+                //echo "<option value=\"".$row[0]."\">".$row[0]."</option>"."<br>";
+            }
+	?>
+        </select>
+	
+
             &nbsp;&nbsp;输入MySQL端口号:
            <input type='text' name='dbport' value=''>
 <td>
@@ -119,6 +146,7 @@ echo "</table>";
         $dbname=$_POST['dbname'];
         $dbip=$_POST['dbip'];
         $dbport=$_POST['dbport'];
+	$dbrole=$_POST['dbrole'];
         //session_start();
 	//$_SESSION['transmit_dbname']=$dbname;
         //require 'show.html';
@@ -152,7 +180,7 @@ echo "</table>";
 <?php
     require 'conn.php';
 
-$perNumber=200; //每页显示的记录数  
+$perNumber=500; //每页显示的记录数  
 $page=$_GET['page']; //获得当前的页面值  
 $count=mysqli_query($con,"select count(*) from mysql_status"); //获得记录总数
 $rs=mysqli_fetch_array($count);   
@@ -167,15 +195,19 @@ $startCount=($page-1)*$perNumber; //分页开始,根据此方法计算出开始�
 
     $condition.="1=1 ";	
     if(!empty($dbname)){
-    	$condition.="AND dbname='{$dbname}'";
+    	$condition.=" AND dbname='{$dbname}'";
     }
     if(!empty($dbip)){
-    	$condition.="AND host='{$dbip}'";
+    	$condition.=" AND host='{$dbip}'";
     }
     if(!empty($dbport)){
-    	$condition.="AND port='{$dbport}'";
+    	$condition.=" AND port='{$dbport}'";
     }
-	$sql = "SELECT * FROM mysql_status WHERE $condition order by id ASC LIMIT $startCount,$perNumber";
+    if(!empty($dbrole)){
+        $condition.=" AND role={$dbrole}";
+    }
+   
+	$sql = "SELECT * FROM mysql_status WHERE $condition order by dbname ASC,id ASC LIMIT $startCount,$perNumber";
  	//echo $sql."<br>";   
 
 $result = mysqli_query($con,$sql);
@@ -192,7 +224,8 @@ while($row = mysqli_fetch_array($result))
 $status=$row['5']==1?'<b><span class="badge badge-success">在线</span></b>':'<span class="badge badge-danger">宕机</span>';
 echo "<tr>";
 echo "<td>{$row['1']}</td>";
-echo "<td>{$row['2']}</td>";
+//echo "<td>{$row['2']}</td>";
+echo "<td><a href='javascript:void(0);' onclick=\"x_admin_show('统计库里每个表的大小','table_statistic.php?ip={$row['1']}&dbname={$row['2']}&port={$row['3']}')\">{$row['2']}</a></td>";
 echo "<td>{$row['3']}</td>";
 echo "<td>{$role}</td>";
 echo "<td>{$status}</td>";

@@ -30,7 +30,15 @@
 ![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/%E9%82%AE%E4%BB%B6%E5%91%8A%E8%AD%A6.png)
 
 # 2020-04-23更新，增加统计库里每个表的大小
-7、在MySQL 状态监控栏目下，点击数据库名，可以查看具体的表大小统计信息
+# 2020-07-16更新，增加主键自增键值监控，重新拉取table_statistic.php文件覆盖之前的即可。
+
+注：sql_mode模式要去掉only_full_group_by，否则报错
+      
+    ERROR 1055 (42000): Expression #2 of SELECT list is not in GROUP BY clause and contains nonaggregated column 't.ENGINE' which is not functionally dependent on columns 
+    in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+
+
+7、在MySQL 状态监控栏目下，点击数据库名，可以查看具体的表大小统计信息以及主键自增键值统计
 ![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/image/table_info.png)
 
 

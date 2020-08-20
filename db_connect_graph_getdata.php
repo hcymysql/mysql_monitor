@@ -1,6 +1,6 @@
 <?php
 
-function index($arr1,$arr2,$arr3){
+function index($arr1,$arr2,$arr3,$arr4){
     ini_set('date.timezone','Asia/Shanghai');
     /*
     $ip = $_GET['ip'];
@@ -11,9 +11,12 @@ function index($arr1,$arr2,$arr3){
     $ip = $arr1;
     $dbname = $arr2;
     $port = $arr3;
+    $interval_time = $arr4;
 
     require 'conn.php';
-    $get_info="select create_time,threads_connected from mysql_status_history where host='${ip}' and dbname='${dbname}' and port=${port} and create_time >=DATE_FORMAT(now(),'%Y-%m-%d')";
+    $get_info="select create_time,threads_connected from mysql_status_history where host='${ip}' and dbname='${dbname}' and port=${port} and 
+	       create_time >=${interval_time} AND create_time <=NOW()";
+
     $result1 = mysqli_query($con,$get_info);
 	//echo $get_info;
 
@@ -43,8 +46,9 @@ if (function_exists($fn)) {
     $ip = $_GET['ip'];
     $dbname = $_GET['dbname'];
     $port = $_GET['port'];
+    $interval_time = $_GET['interval_time'];
 
-index($ip,$dbname,$port);
+index($ip,$dbname,$port,$interval_time);
 
 
 ?>

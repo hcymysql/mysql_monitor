@@ -1,3 +1,9 @@
+<?php 
+
+// 默认展示近12个小时的曲线图
+$interval_time = isset($interval_time) ? $interval_time : 'DATE_SUB(now(),interval 12 hour)'; 
+
+?>
     <script type="text/javascript">
               //var  myChart = echarts.init(document.getElementById('qps'), 'shine');
 	      var  myChart = echarts.init(document.getElementById('qps'),'shine');
@@ -7,7 +13,8 @@
                   type:"post",
                   async:false,
                   //url:"get_graph_data.php",
-		          url:"db_qps_graph_getdata.php?fn=index&ip=<?php echo $ip;?>&dbname=<?php echo $dbname;?>&port=<?php echo $port;?>",
+		  url:"db_qps_graph_getdata.php?fn=index&ip=<?php echo $ip;?>&dbname=<?php echo $dbname;?>&port=<?php echo $port;?>
+		       &interval_time=<?php echo $interval_time;?>",
                   data:{},
                   dataType:"json",
                   success:function(result){

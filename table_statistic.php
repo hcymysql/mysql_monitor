@@ -24,7 +24,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="refresh" content="60" />
-    <title>MySQL 连接数详情</title>
+    <title>MySQL 信息统计</title>
 
 <style type="text/css">
 a:link { text-decoration: none;color: #3366FF}
@@ -72,8 +72,8 @@ a:visited { text-decoration: none;color: green}
 <th>主键自增值剩余</th>
 </tr>
 </thead>
-<tbody>
 
+<tbody>
 <?php
      $con_table_info = mysqli_connect($ip,$user,$pwd,$dbname,$port) or die("数据库链接错误". PHP_EOL .mysqli_connect_error());
 	mysqli_query($con_table_info,"set sql_mode=''");  
@@ -122,11 +122,70 @@ a:visited { text-decoration: none;color: green}
 	 //end while
 echo "</tbody>";
 echo "</table>";
-echo "</div>";
-echo "</div>";
-echo "</div>";
-echo "</div>";
 ?>
+
+<!----------------------------------------------------------------------------------------->
+<br>
+<hr style="height:1px;border:none;border-top:1px dashed #0066CC;" />
+<h3>统计<?php echo $dbname;?>库里执行次数最频繁的前10条SQL语句</h3>
+<table border='0' width='100%'>
+<table style='width:100%;font-size:14px;' class='table table-hover table-condensed'>
+<thead>
+<tr>
+<th>执行语句</th>
+<th>数据库名</th>
+<th>最近执行时间</th>
+<th>SQL执行总次数</th>
+</tr>
+</thead>
+
+<tbody>
+<?php         
+	$con_top10 = mysqli_connect($ip,$user,$pwd,$dbname,$port) or die("数据库链接错误". PHP_EOL .mysqli_connect_error());	
+	$version=mysqli_fetch_row(mysqli_query($con_top10,"select version()"));
+
+	if(preg_match("/5.7|8.0|10.6/",$version[0])){
+                //echo "MySQL的版本是$version[0]"."<br>";
+		$check_performance_schema=mysqli_fetch_row(mysqli_query($con_top10,"select @@performance_schema"));
+		if($check_performance_schema[0]==0){
+			echo "<font size='3' color='#DC143C'>performance_schema参数未开启。</font>"."<br>";
+			echo "<font size='3' color='#DC143C'>在my.cnf配置文件里添加performance_schema=1，并重启mysqld进程生效。</font>"."<br>";
+			die;
+		}
+		mysqli_query($con_top10,"SET @sys.statement_truncate_len = 1024");
+		$Top_10_info=mysqli_query($con_top10,"select query,db,last_seen,exec_count from sys.statement_analysis order by exec_count desc, last_seen desc limit 10");
+		while($row_Top10 = mysqli_fetch_array($Top_10_info)) 
+		{
+			echo "<tr>";
+			echo "<td>{$row_Top10['query']}</td>";
+			echo "<td>{$row_Top10['db']}</td>";
+			echo "<td>{$row_Top10['last_seen']}</td>";
+			echo "<td>{$row_Top10['exec_count']}</td>";
+			echo "</tr>";
+                } 
+	//end while		
+        }else{
+		$Top_10_info=mysqli_query($con_top10,"SELECT DIGEST_TEXT,SCHEMA_NAME,LAST_SEEN,COUNT_STAR FROM performance_schema.events_statements_summary_by_digest ORDER BY COUNT_STAR DESC");	
+		while($row_Top10 = mysqli_fetch_array($Top_10_info)) 
+		{
+			echo "<tr>";
+			echo "<td>{$row_Top10['DIGEST_TEXT']}</td>";
+			echo "<td>{$row_Top10['SCHEMA_NAME']}</td>";
+			echo "<td>{$row_Top10['LAST_SEEN']}</td>";
+			echo "<td>{$row_Top10['COUNT_STAR']}</td>";
+			echo "</tr>";
+                } 
+		//echo "<font size='3' color='#DC143C'>检测到当前数据库版本 $version[0] 不支持sys库特性！</font>"."<br>";
+	}
+echo "</tbody>";
+echo "</table>";
+?> 
+<!----------------------------------------------------------------------------------------->
+</div>
+</div>
+</div>
+</div>
+
 
 
 

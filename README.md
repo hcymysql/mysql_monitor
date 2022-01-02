@@ -1,5 +1,7 @@
 # MySQL Monitor面向研发人员图形可视化监控工具
-# 2022年 计划增加MySQL 8.0 sys Schema常用监控指标
+
+# 增加统计业务库里执行次数最频繁的前10条SQL语句 --- 重新拉取table_statistic.php文件覆盖即可。
+
 # 简介：
 目前常用开源监控工具有nagios，zabbix，grafana，但这些是面向专业DBA使用的，而对于业务研发人员来说，没有专业的MySQL理论知识，并且上述监控工具均为纯英文界面，交互不直观，那么多的监控指标，你知道有哪些是研发最关心的吗？
 
@@ -30,18 +32,14 @@
 
 ![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/%E9%82%AE%E4%BB%B6%E5%91%8A%E8%AD%A6.png)
 
-# 2020-04-23更新，增加统计库里每个表的大小
-# 2020-07-16更新，增加主键自增键值监控，重新拉取table_statistic.php文件覆盖之前的即可。
+7、在MySQL 状态监控栏目下，点击数据库名，可以查看具体的表大小统计信息以及主键自增键值统计
+
+![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/image/table_info.png)
+
 注：sql_mode模式要去掉only_full_group_by，否则报错
       
     ERROR 1055 (42000): Expression #2 of SELECT list is not in GROUP BY clause and contains nonaggregated column 't.ENGINE' which is not functionally dependent on columns 
     in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
-
-
-# 2020-08-20更新——增加按照时间跨度显示图形。重新拉取最新代码覆盖即可。
-
-7、在MySQL 状态监控栏目下，点击数据库名，可以查看具体的表大小统计信息以及主键自增键值统计
-![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/image/table_info.png)
 
 
 一、环境搭建

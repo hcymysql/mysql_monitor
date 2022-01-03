@@ -181,6 +181,67 @@ echo "</tbody>";
 echo "</table>";
 ?> 
 <!----------------------------------------------------------------------------------------->
+<br>
+<hr style="height:1px;border:none;border-top:1px dashed #0066CC;" />
+<h3>统计<?php echo $dbname;?>库里访问次数最多的前10张表</h3>
+<table border='0' width='100%'>
+<table style='width:100%;font-size:14px;' class='table table-hover table-condensed'>
+<thead>
+<tr>
+<th>表文件名</th>
+<th>总共读取次数</th>
+<th>总共读取数据量</th>
+<th>总共写入次数</th>
+<th>总共写入数据量</th>
+<th>总共读写数据量</th>
+</tr>
+</thead>
+
+<tbody>
+<?php         
+	$con_top10 = mysqli_connect($ip,$user,$pwd,$dbname,$port) or die("数据库链接错误". PHP_EOL .mysqli_connect_error());	
+	$version=mysqli_fetch_row(mysqli_query($con_top10,"select version()"));
+
+	if(preg_match("/5.7|8.0|10.6/",$version[0])){
+                //echo "MySQL的版本是$version[0]"."<br>";
+		$check_performance_schema=mysqli_fetch_row(mysqli_query($con_top10,"select @@performance_schema"));
+		if($check_performance_schema[0]==0){
+			echo "<font size='3' color='#DC143C'>performance_schema参数未开启。</font>"."<br>";
+			echo "<font size='3' color='#DC143C'>在my.cnf配置文件里添加performance_schema=1，并重启mysqld进程生效。</font>"."<br>";
+			die;
+		}
+		//mysqli_query($con_top10,"SET @sys.statement_truncate_len = 1024");
+		$Top_10_ioinfo=mysqli_query($con_top10,"select file,count_read,total_read,count_write,total_written,total from sys.io_global_by_file_by_bytes limit 10");
+		while($row_Top10io = mysqli_fetch_array($Top_10_ioinfo)) 
+		{
+			echo "<tr>";
+			echo "<td>{$row_Top10io['file']}</td>";
+			echo "<td>{$row_Top10io['count_read']}</td>";
+			echo "<td>{$row_Top10io['total_read']}</td>";
+			echo "<td>{$row_Top10io['count_write']}</td>";
+			echo "<td>{$row_Top10io['total_written']}</td>";
+			echo "<td>{$row_Top10io['total']}</td>";
+			echo "</tr>";
+                } 
+	//end while		
+        }else{
+		$Top_10_ioinfo=mysqli_query($con_top10,"select substring_index(FILE_NAME,'/',-2) AS file,COUNT_READ AS count_read,concat(round(SUM_NUMBER_OF_BYTES_READ/1024/1024/1024,2), ' GB') AS total_read,COUNT_WRITE AS count_write,concat(round(SUM_NUMBER_OF_BYTES_WRITE/1024/1024/1024,2), ' GB') AS total_written,concat(round((SUM_NUMBER_OF_BYTES_READ+SUM_NUMBER_OF_BYTES_WRITE)/1024/1024/1024,2), ' GB') AS total from performance_schema.file_summary_by_instance ORDER BY  (COUNT_READ+COUNT_WRITE) DESC limit 10");	
+		while($row_Top10io = mysqli_fetch_array($Top_10_ioinfo)) 
+		{
+			echo "<tr>";
+			echo "<td>{$row_Top10io['file']}</td>";
+			echo "<td>{$row_Top10io['count_read']}</td>";
+			echo "<td>{$row_Top10io['total_read']}</td>";
+			echo "<td>{$row_Top10io['count_write']}</td>";
+			echo "<td>{$row_Top10io['total_written']}</td>";
+			echo "<td>{$row_Top10io['total']}</td>";
+			echo "</tr>";
+                } 
+		//echo "<font size='3' color='#DC143C'>检测到当前数据库版本 $version[0] 不支持sys库特性！</font>"."<br>";
+	}
+echo "</tbody>";
+echo "</table>";
+?> 
 </div>
 </div>
 </div>

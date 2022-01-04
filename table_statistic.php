@@ -84,7 +84,7 @@ a:visited { text-decoration: none;color: green}
     FROM information_schema.TABLES t JOIN
     (
     SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = '{$dbname}' AND extra='auto_increment'
-    ) c ON t.table_name=c.table_name GROUP BY TABLE_NAME ORDER BY TOTAL_LENGTH DESC,AUTO_INCREMENT DESC"; 
+    ) c ON t.table_name=c.table_name GROUP BY TABLE_NAME ORDER BY TOTAL_LENGTH DESC,AUTO_INCREMENT DESC LIMIT 10"; 
 	 
      $result_table_info = mysqli_query($con_table_info,$get_table_info);
 	while($row = mysqli_fetch_array($result_table_info)) 
@@ -142,16 +142,16 @@ echo "</table>";
 <tbody>
 <?php         
 	$con_top10 = mysqli_connect($ip,$user,$pwd,$dbname,$port) or die("数据库链接错误". PHP_EOL .mysqli_connect_error());	
+	$check_performance_schema=mysqli_fetch_row(mysqli_query($con_top10,"select @@performance_schema"));
+	if($check_performance_schema[0]==0){
+		echo "<font size='3' color='#DC143C'>performance_schema参数未开启。</font>"."<br>";
+		echo "<font size='3' color='#DC143C'>在my.cnf配置文件里添加performance_schema=1，并重启mysqld进程生效。</font>"."<br>";
+		die;
+	}
+	
 	$version=mysqli_fetch_row(mysqli_query($con_top10,"select version()"));
-
 	if(preg_match("/5.7|8.0|10.6/",$version[0])){
-                //echo "MySQL的版本是$version[0]"."<br>";
-		$check_performance_schema=mysqli_fetch_row(mysqli_query($con_top10,"select @@performance_schema"));
-		if($check_performance_schema[0]==0){
-			echo "<font size='3' color='#DC143C'>performance_schema参数未开启。</font>"."<br>";
-			echo "<font size='3' color='#DC143C'>在my.cnf配置文件里添加performance_schema=1，并重启mysqld进程生效。</font>"."<br>";
-			die;
-		}
+            //echo "MySQL的版本是$version[0]"."<br>";
 		mysqli_query($con_top10,"SET @sys.statement_truncate_len = 1024");
 		$Top_10_info=mysqli_query($con_top10,"select query,db,last_seen,exec_count from sys.statement_analysis order by exec_count desc, last_seen desc limit 10");
 		while($row_Top10 = mysqli_fetch_array($Top_10_info)) 
@@ -200,17 +200,16 @@ echo "</table>";
 <tbody>
 <?php         
 	$con_top10 = mysqli_connect($ip,$user,$pwd,$dbname,$port) or die("数据库链接错误". PHP_EOL .mysqli_connect_error());	
+	if($check_performance_schema[0]==0){
+		echo "<font size='3' color='#DC143C'>performance_schema参数未开启。</font>"."<br>";
+		echo "<font size='3' color='#DC143C'>在my.cnf配置文件里添加performance_schema=1，并重启mysqld进程生效。</font>"."<br>";
+		die;
+	}
+	
 	$version=mysqli_fetch_row(mysqli_query($con_top10,"select version()"));
-
 	if(preg_match("/5.7|8.0|10.6/",$version[0])){
-                //echo "MySQL的版本是$version[0]"."<br>";
-		$check_performance_schema=mysqli_fetch_row(mysqli_query($con_top10,"select @@performance_schema"));
-		if($check_performance_schema[0]==0){
-			echo "<font size='3' color='#DC143C'>performance_schema参数未开启。</font>"."<br>";
-			echo "<font size='3' color='#DC143C'>在my.cnf配置文件里添加performance_schema=1，并重启mysqld进程生效。</font>"."<br>";
-			die;
-		}
-		//mysqli_query($con_top10,"SET @sys.statement_truncate_len = 1024");
+            //echo "MySQL的版本是$version[0]"."<br>";
+	      //mysqli_query($con_top10,"SET @sys.statement_truncate_len = 1024");
 		$Top_10_ioinfo=mysqli_query($con_top10,"select file,count_read,total_read,count_write,total_written,total from sys.io_global_by_file_by_bytes limit 10");
 		while($row_Top10io = mysqli_fetch_array($Top_10_ioinfo)) 
 		{

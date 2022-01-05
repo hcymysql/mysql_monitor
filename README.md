@@ -146,7 +146,7 @@ https://github.com/X-Mars/Zabbix-Alert-WeChat/blob/master/README.md 看此教程
 /var/www/html/mysql_monitor/check_mysql_status.php > /dev/null 2 >&1
 
 # check_mysql_status.php（用来采集被监控端MySQL状态信息和触发报警——单进程）
-# parallel_check_mysql_status.php （2022-01-05 新增并发多线程采集监控数据，默认并发10个线程，建议使用）
+# parallel_check_mysql_status.php （2022-01-05 新增并发多线程采集被监控端MySQL状态信息和触发报警，默认并发10个线程，建议使用）
 # check_mysql_repl.php（用来采集被监控端MySQL主从复制信息和触发报警）
 
 

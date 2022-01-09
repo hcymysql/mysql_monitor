@@ -1,5 +1,5 @@
 <?php
-//并发多线程采集监控数据，默认是并发10个子进程，通过参数（$maxChildPro = 10）来设置。
+//并发多进程采集监控数据，默认是并发10个子进程，通过参数（$maxChildPro = 10）来设置。
 
 error_reporting(E_USER_WARNING | E_USER_NOTICE);
 ini_set('date.timezone','Asia/Shanghai');
@@ -18,7 +18,7 @@ $sqls=array(
         "SHOW SLAVE STATUS"
       );
 
-//引入多线程并发采集数据
+//引入多进程并发采集数据
 //最大的子进程数量
 $maxChildPro = 10;
 

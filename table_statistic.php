@@ -165,7 +165,7 @@ echo "</table>";
                 } 
 	//end while		
         }else{
-		$Top_10_info=mysqli_query($con_top10,"SELECT DIGEST_TEXT,SCHEMA_NAME,LAST_SEEN,COUNT_STAR FROM performance_schema.events_statements_summary_by_digest ORDER BY COUNT_STAR DESC");	
+		$Top_10_info=mysqli_query($con_top10,"SELECT DIGEST_TEXT,SCHEMA_NAME,LAST_SEEN,COUNT_STAR FROM performance_schema.events_statements_summary_by_digest ORDER BY COUNT_STAR DESC LIMIT 10");	
 		while($row_Top10 = mysqli_fetch_array($Top_10_info)) 
 		{
 			echo "<tr>";

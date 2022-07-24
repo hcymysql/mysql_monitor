@@ -28,7 +28,7 @@ function index($arr1,$arr2,$arr3,$arr4){
     public $qps_update;
     public $qps_delete;
   }
-  while($row = mysqli_fetch_array($result1,MYSQL_ASSOC)){
+  while($row = mysqli_fetch_array($result1,MYSQLI_ASSOC)){
     $cons=new Connections();
     $cons->create_time = $row['create_time'];
     $cons->qps_select = $row['qps_select'];

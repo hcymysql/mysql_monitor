@@ -26,7 +26,7 @@ function index($arr1,$arr2,$arr3,$arr4){
     public $Handler_read_key;
     public $Handler_read_rnd_next;
   }
-  while($row = mysqli_fetch_array($result1,MYSQL_ASSOC)){
+  while($row = mysqli_fetch_array($result1,MYSQLI_ASSOC)){
     $cons=new UsingIndex();
     $cons->create_time = $row['create_time'];
     $cons->Handler_read_key = $row['Handler_read_key'];

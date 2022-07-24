@@ -49,7 +49,7 @@
 
 
 一、环境搭建
-# yum install httpd mysql php-mysqlnd -y
+# yum install httpd php php-mysqlnd -y
 # yum install python-simplejson -y
 # service httpd start
 

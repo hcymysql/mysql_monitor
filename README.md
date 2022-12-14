@@ -73,6 +73,7 @@ http://www.php.cn/php-weizijiaocheng-387963.html
 # mysql  -uroot  -p123456  <  mysql_monitor_schema.sql
 
 ## 注：mysql_status_history表引擎可以更改为rocksdb引擎，支持数据压缩，这对于减小存储空间以及增快IO效率都有直接的帮助。
+https://www.percona.com/blog/2018/04/30/a-look-at-myrocks-performance/
 
 2、录入被监控主机的信息
 

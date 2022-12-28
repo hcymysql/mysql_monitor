@@ -15,7 +15,7 @@ function index($arr1,$arr2,$arr3,$arr4){
 
     require 'conn.php';
     $get_info="select create_time,threads_connected from mysql_status_history where host='${ip}' and dbname='${dbname}' and port=${port} and 
-	       create_time >=${interval_time} AND create_time <=NOW()";
+	       create_time >=${interval_time} AND create_time <=NOW() group by FLOOR(UNIX_TIMESTAMP(create_time)/60)";
 
     $result1 = mysqli_query($con,$get_info);
 	//echo $get_info;

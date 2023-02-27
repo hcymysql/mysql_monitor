@@ -1,4 +1,5 @@
 # MySQL Monitor面向研发人员图形可视化监控工具
+![image](https://raw.githubusercontent.com/hcymysql/mysql_monitor/master/image/mysql_monitor_chatgpt.png)
 
 ### 2022-01-03 增加sys schema性能诊断报告 --- 重新拉取table_statistic.php文件覆盖即可
 1）统计业务库里执行次数最频繁的前10条SQL语句 

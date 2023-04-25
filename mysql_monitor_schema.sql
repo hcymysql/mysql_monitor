@@ -30,7 +30,7 @@ CREATE TABLE `mysql_repl_status` (
   `role` tinyint(2) DEFAULT NULL,
   `is_live` tinyint(4) DEFAULT NULL,
   `read_only` varchar(10) DEFAULT NULL,
-  `gtid_mode` varchar(10) DEFAULT NULL,
+  `gtid_mode` varchar(20) DEFAULT NULL,
   `Master_Host` varchar(30) DEFAULT NULL,
   `Master_Port` varchar(100) DEFAULT NULL,
   `Slave_IO_Running` varchar(20) DEFAULT NULL,

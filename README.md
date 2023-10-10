@@ -48,6 +48,7 @@
     ERROR 1055 (42000): Expression #2 of SELECT list is not in GROUP BY clause and contains nonaggregated column 't.ENGINE' which is not functionally dependent on columns 
     in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
 
+```mysql> SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));```
 
 一、环境搭建
 # yum install httpd php php-mysqlnd php-json -y
